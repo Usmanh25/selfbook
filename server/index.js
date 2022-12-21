@@ -76,7 +76,7 @@ mongoose
   .catch((error) => console.log(`${error} Check code in server/index.js`));
 
 // Accessing the path module
-// const path = require("path");
+const path = require("path");
 
 // Step 1:
 app.use(express.static(path.resolve(__dirname, "./client/build")));
