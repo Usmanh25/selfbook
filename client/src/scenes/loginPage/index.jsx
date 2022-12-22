@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme, Divider, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import Form from "./Form";
 
 const LoginPage = () => {
@@ -11,7 +11,6 @@ const LoginPage = () => {
   const footerLinks4 = ["Developers", "Careers", "Cookies", "Terms", "Help", "Contact"]
   const languageLinks = ["English", "Español", "Français", "中文", "العربية", "Português",
     "Italiano", "한국어", "Deutsch", "हिन्दी"]
-  const theme = useTheme();
   const isNonMobileScreens = useMediaQuery("(min-width: 876px)");
   return (
     <>

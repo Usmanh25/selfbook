@@ -1,23 +1,13 @@
 import {
-    EditOutlined,
-    DeleteOutlined,
-    AttachFileOutlined,
-    GifBoxOutlined,
-    ImageOutlined,
-    MicOutlined,
-    MoreHorizOutlined,
-} from "@mui/icons-material";
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import {
-    Box,
-    Divider,
-    Typography,
-    InputBase,
-    useTheme,
-    Button,
-    IconButton,
-    useMediaQuery,
+  Box,
+  Divider,
+  Typography,
+  InputBase,
+  useTheme,
+  Button,
+  IconButton,
 } from "@mui/material";
+import { EditOutlined, DeleteOutlined } from "@mui/icons-material";
 import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
 import UserImage from "components/UserImage";
@@ -36,7 +26,6 @@ const MyPostWidget = ({ picturePath }) => {
     const { palette } = useTheme();
     const { _id } = useSelector((state) => state.user);
     const token = useSelector((state) => state.token);
-    const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     const mediumMain = palette.neutral.mediumMain;
     const medium = palette.neutral.medium;
   
@@ -134,38 +123,13 @@ const MyPostWidget = ({ picturePath }) => {
             </Typography>
           </FlexBetween>
   
-          {/* {isNonMobileScreens ? (
-            <>
-              <FlexBetween gap="0.25rem">
-                <GifBoxOutlined sx={{ color: mediumMain }} />
-                <Typography color={mediumMain}>Clip</Typography>
-              </FlexBetween>
-  
-              <FlexBetween gap="0.25rem">
-                <AttachFileOutlined sx={{ color: mediumMain }} />
-                <Typography color={mediumMain}>Attachment</Typography>
-              </FlexBetween>
-  
-              <FlexBetween gap="0.25rem">
-                <MicOutlined sx={{ color: mediumMain }} />
-                <Typography color={mediumMain}>Audio</Typography>
-              </FlexBetween>
-            </>
-          ) : (
-            <FlexBetween gap="0.25rem">
-              <MoreHorizOutlined sx={{ color: mediumMain }} />
-            </FlexBetween>
-          )} */}
-  
           <Button
             className="sendButton"
             disabled={!post}
             onClick={handlePost}
             sx={{
               color: 'white',
-              // color: palette.background.alt,
               backgroundColor: '#5493ff',
-              // backgroundColor: palette.primary.main,
               borderRadius: "3rem",
             }}
           >

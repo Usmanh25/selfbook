@@ -1,19 +1,12 @@
-import {
-    ManageAccountsOutlined,
-    EditOutlined,
-    LocationOnOutlined,
-    WorkOutlineOutlined,
-} from "@mui/icons-material";
 import { Box, Typography, Divider, useTheme } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BsLinkedin, BsGithub } from "react-icons/bs";
 import { FaAngellist } from "react-icons/fa";
-import LocationCityIcon from '@mui/icons-material/LocationCity';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import HomeIcon from '@mui/icons-material/Home';
 
@@ -22,7 +15,6 @@ const UserWidget = ({ userId, picturePath }) => {
     const { palette } = useTheme();
     const navigate = useNavigate();
     const token = useSelector((state) => state.token);
-    const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;
 
@@ -48,8 +40,6 @@ const UserWidget = ({ userId, picturePath }) => {
         lastName,
         location,
         occupation,
-        viewedProfile,
-        impressions,
         friends,
     } = user;
 
@@ -98,22 +88,6 @@ const UserWidget = ({ userId, picturePath }) => {
 
         <Divider />
 
-        {/* THIRD ROW */}
-        {/* <Box p="1rem 0">
-            <FlexBetween mb="0.5rem">
-            <Typography color={medium}>Who's viewed your profile</Typography>
-            <Typography color={main} fontWeight="500">
-                {viewedProfile}
-            </Typography>
-            </FlexBetween>
-            <FlexBetween>
-            <Typography color={medium}>Impressions of your post</Typography>
-            <Typography color={main} fontWeight="500">
-                {impressions}
-            </Typography>
-            </FlexBetween>
-        </Box> */}
-
         <Divider />
 
         {/* FOURTH ROW */}
@@ -122,16 +96,12 @@ const UserWidget = ({ userId, picturePath }) => {
             View the Creator
             </Typography>
 
-
-
-
-
             <FlexBetween gap="1rem" mb="0.5rem">
             <FlexBetween gap="1rem">
                 <BsLinkedin size={25} color={main}/>
                 <Box>
                 <Typography color={main} fontWeight="500">
-                <a className='linkTags' href="https://www.linkedin.com/in/usman-hameed-5486b11b0/" target="_blank">Linkedin</a>
+                <a className='linkTags' href="https://www.linkedin.com/in/usman-hameed-5486b11b0/" target="_blank" rel="noreferrer">Linkedin</a>
                 </Typography>
                 </Box>
             </FlexBetween>
@@ -142,7 +112,7 @@ const UserWidget = ({ userId, picturePath }) => {
                 <BsGithub size={25} color={main}/>
                 <Box>
                 <Typography color={main} fontWeight="500">
-                <a className='linkTags' href="https://github.com/Usmanh25" target="_blank">Github</a>
+                <a className='linkTags' href="https://github.com/Usmanh25" target="_blank" rel="noreferrer">Github</a>
                 </Typography>
                 </Box>
             </FlexBetween>
@@ -153,7 +123,7 @@ const UserWidget = ({ userId, picturePath }) => {
                 <FaAngellist size={25} color={main}/>
                 <Box>
                 <Typography color={main} fontWeight="500">
-                <a className='linkTags' href="https://angel.co/u/usman-hameed-2" target="_blank">AngelList</a>
+                <a className='linkTags' href="https://angel.co/u/usman-hameed-2" target="_blank" rel="noreferrer">AngelList</a>
                 </Typography>
                 </Box>
             </FlexBetween>
