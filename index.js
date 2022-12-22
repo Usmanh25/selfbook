@@ -19,11 +19,6 @@ import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
 
 
-
-/* CONFIGURATIONS */
-// require("dotenv").config()
-// const path = require("path")
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
@@ -36,12 +31,12 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
-app.use("/assets", express.static(path.join(__dirname, "client/public/assets")));
+app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "client/public/assets");
+    cb(null, "public/assets");
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -79,11 +74,30 @@ mongoose
   .catch((error) => console.log(`${error} Check code in server/index.js`));
 
 
-// HEROKU CONFIG
+// FIRST HEROKU CONFIG
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static("client/build"))
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"))
+//   })
+// }
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"))
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"))
-  })
-}
+// Step 1:
+app.use(express.static(path.resolve(__dirname, "./client/build")));
+// Step 2:
+app.get("*", function(request, response) {
+  response.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
+});
+
+
+
+
+
+// use
+// app.use('*', express.static(path.join(__dirname, "client", "build")))
+
+
+// instead of
+// app.use("/*", (req, res) => {
+//   res.send(path.join(__dirname, "client", "build", "index.html"));
+// });

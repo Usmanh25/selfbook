@@ -136,14 +136,13 @@ const Form = () => {
               <form className='formClass' onSubmit={handleSubmit}>
                 <Box
                   display="grid"
-                  textAlign="center"
                   gap="30px"
                   gridTemplateColumns="repeat(1, minmax(0, 1fr))"
                   sx={{
                     "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
                   }}
                 >
-                  {/* <img alt="logo" id="loginLogo" src="../assets/loginLogo.png"></img> */}
+                  {/* <img textalign alt="logo" id="loginLogo" src="../assets/loginLogo.png"></img> */}
 
               
                   {isRegister && (
@@ -292,7 +291,7 @@ const Form = () => {
                   <Button
                     type="submit"
                     size="sm"
-                    textAlign="center"
+                    // textAlign="center"
                     sx={{
                       fontSize: "14px",
                       p: "0.75rem",

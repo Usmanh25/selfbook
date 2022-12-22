@@ -69,30 +69,6 @@ const LoginPage = () => {
                   fontSize={22} >Connect with friends and the world around you on selfbook.</Typography>
               </Box>
             <Form/>
-
-            {/* <Typography backgroundColor="white" mt={15}>
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {languageLinks.map(link => (<ul className="footer-link-item">{link}</ul>))}
-              </Typography>                
-
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {footerLinks1.map(link => (<ul className="footer-link-item">{link}</ul>))}
-              </Typography>
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {footerLinks2.map(link => (<ul className="footer-link-item">{link}</ul>))}
-              </Typography>
-
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {footerLinks3.map(link => (<ul className="footer-link-item">{link}</ul>))}
-              </Typography>
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {footerLinks4.map(link => (<ul className="footer-link-item">{link}</ul>))}
-              </Typography>
-              <Typography width="90%" m="auto" mt={1} textAlign="left" display="flex" >
-                <ul className="footer-link-item">SelfBook © 2022</ul>
-              </Typography>
-
-            </Typography> */}
           </Box>
         }
 
