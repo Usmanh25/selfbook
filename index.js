@@ -26,7 +26,7 @@ mongoose.set('strictQuery', false);
 const app = express();
 app.use(express.json());
 // app.use(helmet());
-// app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(
   helmet({
     contentSecurityPolicy: false,
