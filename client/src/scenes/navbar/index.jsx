@@ -10,14 +10,12 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import {
   Search,
   DarkMode,
   Mail,
-  Notifications,
   LightMode,
   Menu,
   Close,
