@@ -229,8 +229,7 @@ const Form = () => {
                             {({ getRootProps, getInputProps }) => (
                               <Box
                                 {...getRootProps()}
-                                border={`2px dashed ${palette.primary.main}`}
-                                // p="1rem"
+                                border={`2px dashed #5493ff`}
                                 sx={{ "&:hover": { cursor: "pointer" } }}
                               >
                                 <input {...getInputProps()} />
@@ -246,7 +245,6 @@ const Form = () => {
                             )}
                           </Dropzone>
                         </div>
-                      {/* </Box> */}
                     </>
                   )}
 
@@ -287,17 +285,16 @@ const Form = () => {
                 </Box>
 
                 {/* BUTTONS */}
-                <Box>
+                <Box className='login-button'>
                   <Button
                     type="submit"
                     size="sm"
-                    // textAlign="center"
                     sx={{
                       fontSize: "14px",
                       p: "0.75rem",
                       m: "1rem 0",
                       width: "75%",
-                      // height: "50%",
+                      textAlign: "center",
                       backgroundColor: '#5493ff',
                       color: palette.background.alt,
                       "&:hover": { color: '#5493ff' },
@@ -312,6 +309,7 @@ const Form = () => {
                     }}
                     sx={{
                       fontSize: "14px",
+                      textAlign: "center",
                       textDecoration: "underline",
                       color: '#5493ff',
                       "&:hover": {

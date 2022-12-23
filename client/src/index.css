@@ -45,8 +45,11 @@ body,
 }
 
 .formClass {
-  /* background-color: black; */
+  /* background-color: aquamarine; */
   /* text-align: center; */
+  display: flex;
+  justify-items: center;
+  flex-direction: column;
 }
 
 
@@ -100,14 +103,9 @@ body,
 }
 
 .dzone {
-  /* background-color: blue; */
-  /* position: absolute; */
-  height: 10%;
-  color: #2e2e7a
-  /* height: 40px; */
-  /* justify-content: center; */
-  /* display: flex; */
-  /* align-items: center; */
+  width: 75%;
+  margin: auto;
+  text-align: center;
 }
 
 .pictagram {
@@ -168,6 +166,6 @@ body,
   margin: auto;
 }
 
-#x {
-  border-bottom: 1px solid gray;
+.login-button {
+  text-align: center;
 }

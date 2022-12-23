@@ -30,26 +30,26 @@ const LoginPage = () => {
               <Form/>
             </Box>
             
-          <Typography backgroundColor="white" mt={15}>
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {languageLinks.map(link => (<ul className="footer-link-item">{link}</ul>))}
+          <Typography component={'li'} backgroundColor="white" mt={15}>
+              <Typography component={'ul'} width="90%" m="auto" textAlign="left" display="flex" >
+                {languageLinks.map(link => (<ul key={link} className="footer-link-item">{link}</ul>))}
               </Typography>                
 
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {footerLinks1.map(link => (<ul className="footer-link-item">{link}</ul>))}
+              <Typography component={'ul'} width="90%" m="auto" textAlign="left" display="flex" >
+                {footerLinks1.map(link => (<ul key={link} className="footer-link-item">{link}</ul>))}
               </Typography>
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {footerLinks2.map(link => (<ul className="footer-link-item">{link}</ul>))}
+              <Typography component={'ul'} width="90%" m="auto" textAlign="left" display="flex" >
+                {footerLinks2.map(link => (<ul key={link} className="footer-link-item">{link}</ul>))}
               </Typography>
 
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {footerLinks3.map(link => (<ul className="footer-link-item">{link}</ul>))}
+              <Typography component={'ul'} width="90%" m="auto" textAlign="left" display="flex" >
+                {footerLinks3.map(link => (<ul key={link} className="footer-link-item">{link}</ul>))}
               </Typography>
-              <Typography width="90%" m="auto" textAlign="left" display="flex" >
-                {footerLinks4.map(link => (<ul className="footer-link-item">{link}</ul>))}
+              <Typography component={'ul'} width="90%" m="auto" textAlign="left" display="flex" >
+                {footerLinks4.map(link => (<ul key={link} className="footer-link-item">{link}</ul>))}
               </Typography>
-              <Typography width="90%" m="auto" mt={1} textAlign="left" display="flex" >
-                <ul className="footer-link-item">SelfBook © 2022</ul>
+              <Typography component={'ul'} width="90%" m="auto" mt={1} textAlign="left" display="flex" >
+                <ul key='uniqueKey1' className="footer-link-item">SelfBook © 2022</ul>
               </Typography>
 
             </Typography>
