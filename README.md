@@ -127,7 +127,7 @@ On the home feed, there is an input for a user to post a status, post an image, 
 
 Users can view posted comments on individual posts
 
-<img src="public/assets/Comment.png"></img>
+<img src="public/assets/Comments.png"></img>
 
 ## Future Features
 * Posting Video 
