@@ -14,14 +14,16 @@ import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import {
   Search,
-  DarkMode,
+  // DarkMode,
   Mail,
-  LightMode,
+  // Notifications,
+  // LightMode,
   Menu,
   Close,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state";
+import { setLogout } from "state";
+// import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 
@@ -34,7 +36,7 @@ const Navbar = () => {
 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
-  const dark = theme.palette.neutral.dark;
+  // const dark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
@@ -149,7 +151,7 @@ const Navbar = () => {
             alignItems="center"
             gap="3rem"
           >
-            <IconButton
+            {/* <IconButton
               onClick={() => dispatch(setMode())}
               sx={{ fontSize: "25px" }}
             >
@@ -158,7 +160,7 @@ const Navbar = () => {
               ) : (
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
-            </IconButton>
+            </IconButton> */}
             {/* <Message sx={{ fontSize: "25px" }} />
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} /> */}
