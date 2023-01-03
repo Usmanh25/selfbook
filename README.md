@@ -121,13 +121,13 @@ On the home feed, there is an input for a user to post a status, post an image, 
 
 ```
 
-<img src="public/assets/MakePost.png"></img>
+<img width="250px" src="public/assets/MakePost.png"></img>
 
 ## Viewing Comments
 
 Users can view posted comments on individual posts
 
-<img src="public/assets/Comments.png"></img>
+<img width="250px" src="public/assets/Comments.png"></img>
 
 ## Future Features
 * Posting Video 
