@@ -31,7 +31,7 @@ app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(helmet.contentSecurityPolicy({directives: {
   defaultSrc: ["'self'"],
-  connectSrc: ["'self'", 'https://selfbooksb.herokuapp.com'],
+  connectSrc: ["'self'", 'https://selfbooksb.herokuapp.com', 'http://localhost:3001/auth/login'],
   blockAllMixedContent: [],
   fontSrc: ["'self'", 'https:', 'data:'],
   frameAncestors: ["'self'"],
