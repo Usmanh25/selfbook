@@ -36,7 +36,7 @@ app.use(helmet.contentSecurityPolicy({directives: {
   fontSrc: ["'self'", 'https:', 'data:'],
   frameAncestors: ["'self'"],
   frameSrc: ["'self'"],
-  imgSrc: ["'self'", 'data:'],
+  imgSrc: ["'self'", 'data:', "*"],
   objectSrc: ["'none'"],
   mediaSrc: ["'self'", 'blob:', 'data:'],
   scriptSrcAttr: ["'none'"],
