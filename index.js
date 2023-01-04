@@ -31,13 +31,21 @@ app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(helmet.contentSecurityPolicy({directives: {
   defaultSrc: ["'self'"],
-  connectSrc: ["'self'", "http://localhost:3001/auth/login"],
-  imgSrc: ["'self'"],
+  connectSrc: ["'self'", 'https://selfbooksb.herokuapp.com'],
+  blockAllMixedContent: [],
+  fontSrc: ["'self'", 'https:', 'data:'],
+  frameAncestors: ["'self'"],
+  frameSrc: ["'self'"],
+  imgSrc: ["'self'", 'data:'],
+  objectSrc: ["'self'", 'blob:'],
+  mediaSrc: ["'self'", 'blob:', 'data:'],
+  scriptSrcAttr: ["'none'"],
+  styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
   formAction: ["'self'"],
-  styleSrc: ["'self'", "https: 'unsafe-inline'"],
   scriptSrc: ["'self'", "'unsafe-inline'"],
   upgradeInsecureRequests: [],
 }}))
+
 
 
 
