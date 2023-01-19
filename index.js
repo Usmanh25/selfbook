@@ -29,7 +29,7 @@ app.use(express.json());
 
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-// app.use(helmet({contentSecurityPolicy: false}));
+
 app.use(helmet.contentSecurityPolicy({directives: {
   defaultSrc: ["'self'"],
   connectSrc: ["'self'", "*"],
