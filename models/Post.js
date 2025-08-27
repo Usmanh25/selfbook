@@ -18,10 +18,12 @@ const postSchema = mongoose.Schema(
     description: String,
     picturePath: String,
     userPicturePath: String,
-    likes: {
-      type: Map,
-      of: Boolean,
-    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ], // ✅ changed from Map to Array
     comments: {
       type: Array,
       default: [],

@@ -8,6 +8,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+
 import { register } from "./controllers/auth.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
@@ -18,37 +19,29 @@ import User from "./models/User.js";
 import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
 
-
+dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config();
+
 mongoose.set('strictQuery', false);
+
 const app = express();
+
+/* MIDDLEWARE */
 app.use(express.json());
-
-
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-
-app.use(helmet.contentSecurityPolicy({directives: {
-  defaultSrc: ["'self'"],
-  connectSrc: ["'self'", "*"],
-  fontSrc: ["'self'", 'https:', 'data:'],
-  frameAncestors: ["'self'"],
-  frameSrc: ["'self'"],
-  imgSrc: ["'self'", 'data:', "*"],
-  objectSrc: ["'none'"],
-  mediaSrc: ["'self'", 'blob:', 'data:'],
-  scriptSrcAttr: ["'none'"],
-  styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
-  formAction: ["'self'"],
-  scriptSrc: ["'self'", "'unsafe-inline'"],
-  upgradeInsecureRequests: [],
-}}))
-
-
-
-
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "*"],
+    },
+  })
+);
 app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
@@ -67,66 +60,32 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
-app.post("/auth/register", upload.single("picture"), register);
 app.post("/posts", verifyToken, upload.single("picture"), createPost);
-
 
 /* ROUTES */
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 
-
-
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
-mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    app.listen(PORT, () => console.log(`CONNECTED TO MDB! Server Port: ${PORT}`));
 
-    /* ADD DATA THEN COMMENT IT OUT IMMEDIATELY */
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    app.listen(PORT, () =>
+      console.log(`✅ Connected to MongoDB Atlas. Server running on port ${PORT}`)
+    );
+
+    /* OPTIONAL: Seed data, run only once */
     // User.insertMany(users);
     // Post.insertMany(posts);
-
   })
-  .catch((error) => console.log(`${error} Check code in server/index.js`));
+  .catch((error) => console.error("❌ MongoDB connection error:", error.message));
 
-
-// FIRST HEROKU CONFIG
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"))
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"))
-  })
-}
-
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "./client/build")))
-//   app.get("*", function(request, response) {
-//     response.sendFile(path.resolve(__dirname, "./client/build", "index.html"))
-//   })
-// }
-
-// // Step 1:
-// app.use(express.static(path.resolve(__dirname, "./client/build")));
-// // Step 2:
-// app.get("*", function(request, response) {
-//   response.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
-// });
-
-
-
-
-
-// use
-// app.use('*', express.static(path.join(__dirname, "client", "build")))
-
-
-// instead of
-// app.use("/*", (req, res) => {
-//   res.send(path.join(__dirname, "client", "build", "index.html"));
-// });
+/* GRACEFUL SHUTDOWN */
+process.on("SIGINT", async () => {
+  await mongoose.connection.close();
+  console.log("MongoDB connection closed.");
+  process.exit(0);
+});

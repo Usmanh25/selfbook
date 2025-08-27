@@ -40,7 +40,7 @@ On the user's person's profile page, their friends list is rendered. This compon
 // client/src/components/FriendListComponent.jsx
 const dispatch = useDispatch();
 const token = useSelector((state) => state.token);
-const friends = useSelector((state) => state.user.friends);
+const friends = useSelector((state) => state.auth.user.friends);
 
 const getFriends = async () => {
 const response = await fetch(
@@ -96,7 +96,7 @@ On the home feed, there is an input for a user to post a status, post an image, 
   const dispatch = useDispatch();
   const [image, setImage] = useState(null);
   const [post, setPost] = useState("");
-  const { _id } = useSelector((state) => state.user);
+  const { _id } = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.token);
 
   const handlePost = async () => {

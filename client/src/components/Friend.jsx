@@ -9,9 +9,9 @@ import UserImage from "./UserImage";
 const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { _id } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends);
+  const { _id } = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
+  const friends = useSelector((state) => state.auth.user.friends);
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -21,18 +21,28 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const isFriend = friends.find((friend) => friend._id === friendId);
 
   const patchFriend = async () => {
-    const response = await fetch(
-      `http://localhost:3001/users/${_id}/${friendId}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+    try {
+      const response = await fetch(
+        `http://localhost:3001/users/${_id}/${friendId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Error patching friend:", response.status, response.statusText);
+        return;
       }
-    );
-    const data = await response.json();
-    dispatch(setFriends({ friends: data }));
+
+      const data = await response.json();
+      dispatch(setFriends({ friends: data }));
+    } catch (err) {
+      console.error("Network error patching friend:", err);
+    }
   };
 
   return (
@@ -68,9 +78,9 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
         sx={{ backgroundColor: mediumMain, p: "0.6rem" }}
       >
         {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: '#5493ff' }} />
+          <PersonRemoveOutlined sx={{ color: "#5493ff" }} />
         ) : (
-          <PersonAddOutlined sx={{ color: '#5493ff' }} />
+          <PersonAddOutlined sx={{ color: "#5493ff" }} />
         )}
       </IconButton>
     </FlexBetween>

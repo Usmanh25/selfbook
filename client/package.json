@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy":  "https://selfbooksb.herokuapp.com/",
+  "proxy": "https://selfbooksb.herokuapp.com/",
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -12,6 +12,8 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "ajv": "^8.17.1",
+    "ajv-keywords": "^5.1.0",
     "dotenv": "^16.0.3",
     "formik": "^2.2.9",
     "react": "^18.2.0",
@@ -47,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-plugin-jest": "^25.7.0"
   }
 }
