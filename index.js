@@ -20,6 +20,7 @@ import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
 
 dotenv.config();
+console.log("JWT_SECRET at runtime:", process.env.JWT_SECRET);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

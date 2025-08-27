@@ -1,8 +1,12 @@
+import "dotenv/config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("❌ JWT_SECRET is not defined. Check your .env file.");
+}
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
 /* REGISTER USER */
 export const register = async (req, res) => {
