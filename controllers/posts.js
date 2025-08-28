@@ -5,16 +5,15 @@ import User from "../models/User.js";
 /* CREATE: Create a new post */
 export const createPost = async (req, res) => {
   try {
-    const { userId, description, picturePath } = req.body;
+    const { userId, description } = req.body;
+    const picturePath = req.file ? req.file.filename : "";
 
     if (!userId) {
-      console.warn("createPost called without userId");
       return res.status(400).json({ message: "User ID is required" });
     }
 
     const user = await User.findById(userId).lean();
     if (!user) {
-      console.info(`User not found for createPost: ${userId}`);
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -25,13 +24,12 @@ export const createPost = async (req, res) => {
       location: user.location || "Unknown",
       description: description || "",
       userPicturePath: user.picturePath || "",
-      picturePath: picturePath || "",
-      likes: {},
+      picturePath,
+      likes: [],
       comments: [],
     });
 
     await newPost.save();
-
     const posts = await Post.find().sort({ createdAt: -1 }).lean();
     res.status(201).json(posts);
   } catch (err) {

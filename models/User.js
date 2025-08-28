@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   firstName: { type: String, default: "" },
   lastName: { type: String, default: "" },
-  picturePath: { type: String, default: "" },
+  picturePath: { type: String, default: "/assets/default-image.jpg" },
   location: { type: String, default: "" },
   occupation: { type: String, default: "" },
   friends: { type: Array, default: [] },

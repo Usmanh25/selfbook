@@ -127,3 +127,40 @@ export const addRemoveFriend = async (req, res) => {
     res.status(500).json({ message: "Internal server error updating friends" });
   }
 };
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { firstName, lastName, location, occupation } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { firstName, lastName, location, occupation },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const uploadProfileImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const file = req.file;
+
+    if (!file) return res.status(400).json({ message: "No file uploaded" });
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { picturePath: file.originalname },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error("Error uploading profile image:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

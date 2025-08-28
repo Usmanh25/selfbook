@@ -61,7 +61,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   return (
     <div className="postsWidget">
-      {posts.map(({
+      {[...posts].reverse().map(({
         _id,
         userId,
         firstName,
