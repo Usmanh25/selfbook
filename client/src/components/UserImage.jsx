@@ -1,8 +1,16 @@
 import { Box } from "@mui/material";
 
 const UserImage = ({ image, size = "60px", onClick }) => {
-  // Use the full backend path for the image
-  const srcPath = image.startsWith("/assets/") ? image : `/assets/${image}`;
+  // determine image path
+  let srcPath;
+  if (!image) {
+    srcPath = "/assets/default-image.jpg";
+  } else if (image.startsWith("http") || image.startsWith("/assets/")) {
+    srcPath = image; // already a path
+  } else {
+    srcPath = `/assets/${image}`; // just a filename, prepend /assets
+  }
+
 
   return (
     <Box
@@ -16,7 +24,13 @@ const UserImage = ({ image, size = "60px", onClick }) => {
         width={size}
         height={size}
         alt="user"
-        src={`http://localhost:3001${srcPath}`}
+        src={srcPath}
+        onError={(e) => {
+          if (!e.currentTarget.dataset.defaultSet) {
+            e.currentTarget.dataset.defaultSet = true;
+            e.currentTarget.src = "/assets/default-image.jpg";
+          }
+        }}
       />
     </Box>
   );

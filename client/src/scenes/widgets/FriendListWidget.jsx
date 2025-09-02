@@ -1,44 +1,11 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-const FriendListWidget = ({ userId }) => {
+const FriendListWidget = () => {
   const { palette } = useTheme();
-  const token = useSelector((state) => state.auth.token); // safe access
-  const [friends, setFriends] = useState([]); // local state with default empty array
-
-  const getFriends = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3001/users/${userId}/friends`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Failed to fetch friends:", errorData);
-        alert(errorData.message || "Failed to fetch friends");
-        setFriends([]);
-        return;
-      }
-
-      const data = await response.json();
-      setFriends(Array.isArray(data) ? data : []); // ensure we have an array
-    } catch (err) {
-      console.error("Network error fetching friends:", err);
-      alert("Error fetching friends");
-      setFriends([]);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) getFriends();
-  }, [userId, token]);
+  const friends = useSelector((state) => Array.isArray(state.auth.user?.friends) ? state.auth.user.friends : []);
 
   return (
     <WidgetWrapper>

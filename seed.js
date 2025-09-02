@@ -51,11 +51,11 @@ const seedDB = async () => {
       console.log("👤 Guest user already exists");
     }
 
-    // Map posts to real user _id and fix likes
+    // Map posts to real users using post.userId
     const postsWithUserIds = posts.map(post => {
-      const user = createdUsers.find(u => u.username === post.username) || guestUser;
+      const user = createdUsers.find(u => u._id.toString() === post.userId.toString()) || guestUser;
 
-      // Convert likes to array of user IDs
+      // Convert likes Map or object to array of ObjectIds
       let likesArray = [];
       if (post.likes) {
         if (post.likes instanceof Map) {

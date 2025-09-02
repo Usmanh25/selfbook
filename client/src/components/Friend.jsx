@@ -5,85 +5,83 @@ import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
+import { useState, useEffect } from "react";
 
 const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { _id } = useSelector((state) => state.auth.user);
+  const { _id, friends = [] } = useSelector((state) => state.auth.user || {});
   const token = useSelector((state) => state.auth.token);
-  const friends = useSelector((state) => state.auth.user.friends);
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
   const mediumMain = palette.neutral.light;
 
-  const isFriend = friends.find((friend) => friend._id === friendId);
+
+  const [isFriendLocal, setIsFriendLocal] = useState(friends.some(f => f._id === friendId));
+
+  useEffect(() => {
+    setIsFriendLocal(friends.some(f => f._id === friendId));
+  }, [friends, friendId]);
+
 
   const patchFriend = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3001/users/${_id}/${friendId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      setIsFriendLocal(prev => !prev);
 
-      if (!response.ok) {
-        console.error("Error patching friend:", response.status, response.statusText);
-        return;
-      }
+      const response = await fetch(`http://localhost:3001/users/${_id}/${friendId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      if (!response.ok) throw new Error("Failed to update friend");
       const data = await response.json();
-      dispatch(setFriends({ friends: data }));
+
+      dispatch(setFriends({ friends: data.friends }));
     } catch (err) {
-      console.error("Network error patching friend:", err);
+      console.error("Error patching friend:", err.message);
+      setIsFriendLocal(prev => !prev);
     }
   };
 
   return (
-    <FlexBetween>
-      <FlexBetween gap="1rem">
-        <UserImage image={userPicturePath} size="55px" />
-        <Box
-          onClick={() => {
-            navigate(`/profile/${friendId}`);
-            navigate(0);
-          }}
-        >
-          <Typography
-            color={main}
-            variant="h5"
-            fontWeight="500"
-            sx={{
-              "&:hover": {
-                color: palette.primary.light,
-                cursor: "pointer",
-              },
-            }}
+    <Box position="relative" width="100%">
+      <FlexBetween>
+        <FlexBetween gap="1rem">
+          <UserImage image={userPicturePath || "default-image.jpg"} size="55px" />
+          <Box
+            onClick={() => navigate(`/profile/${friendId}`)}
           >
-            {name}
-          </Typography>
-          <Typography color={medium} fontSize="0.75rem">
-            {subtitle}
-          </Typography>
-        </Box>
+            <Typography
+              color={main}
+              variant="h5"
+              fontWeight="500"
+              sx={{ "&:hover": { color: palette.primary.light, cursor: "pointer" } }}
+            >
+              {name}
+            </Typography>
+            <Typography color={medium} fontSize="0.75rem">
+              {subtitle}
+            </Typography>
+          </Box>
+        </FlexBetween>
+
+        <IconButton
+          onClick={patchFriend}
+          sx={{ backgroundColor: mediumMain, p: "0.6rem", position: "absolute", top: 0, right: 0 }}
+        >
+          {isFriendLocal ? (
+            <PersonRemoveOutlined sx={{ color: "#5493ff" }} />
+          ) : (
+            <PersonAddOutlined sx={{ color: "#5493ff" }} />
+          )}
+        </IconButton>
       </FlexBetween>
-      <IconButton
-        onClick={() => patchFriend()}
-        sx={{ backgroundColor: mediumMain, p: "0.6rem" }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: "#5493ff" }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: "#5493ff" }} />
-        )}
-      </IconButton>
-    </FlexBetween>
+    </Box>
   );
 };
 

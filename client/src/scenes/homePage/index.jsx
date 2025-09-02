@@ -13,9 +13,6 @@ const HomePage = () => {
   const _id = user?._id || null;
   const picturePath = user?.picturePath || "";
 
-  useEffect(() => {
-    console.log("HomePage sees Redux user:", user);
-  }, [user]);
 
   if (!_id)
     return (

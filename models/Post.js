@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const postSchema = mongoose.Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // ✅ Allows populate()
       required: true,
     },
     firstName: {
@@ -23,7 +24,7 @@ const postSchema = mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
-    ], // ✅ changed from Map to Array
+    ],
     comments: {
       type: Array,
       default: [],

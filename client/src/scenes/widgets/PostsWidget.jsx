@@ -1,57 +1,38 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPosts } from "state";
+import { setPosts } from "../../state";
 import PostWidget from "./PostWidget";
 import { Box, CircularProgress } from "@mui/material";
-
+const BASE_URL = process.env.REACT_APP_BASE_API_URL;
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
-  const posts = useSelector((state) => state.auth.posts) || [];
+  const posts = useSelector((state) => state.auth.posts);
   const token = useSelector((state) => state.auth.token);
 
-  const getPosts = async () => {
+  const fetchPosts = async (url) => {
     try {
-      const response = await fetch("http://localhost:3001/posts", {
+      const response = await fetch(url, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Failed to fetch posts");
       const data = await response.json();
-      dispatch(setPosts({ posts: Array.isArray(data) ? data : [] }));
+      dispatch(setPosts({ posts: data }));
     } catch (err) {
       console.error("Error fetching posts:", err);
       dispatch(setPosts({ posts: [] }));
     }
   };
 
-  const getUserPosts = async () => {
-    try {
-      const response = await fetch(`http://localhost:3001/posts/${userId}/posts`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch user posts");
-      const data = await response.json();
-      dispatch(setPosts({ posts: Array.isArray(data) ? data : [] }));
-    } catch (err) {
-      console.error("Error fetching user posts:", err);
-      dispatch(setPosts({ posts: [] }));
-    }
-  };
-
   useEffect(() => {
-    if (isProfile) {
-      getUserPosts();
+    if (isProfile && userId) {
+      fetchPosts(`${BASE_URL}/posts/${userId}/posts`);
     } else {
-      getPosts();
+      fetchPosts(`${BASE_URL}/posts`);
     }
-  }, [isProfile, userId, token]); // added dependencies for safe rerenders
+  }, [userId, isProfile, token]);
 
-  if (!posts.length) {
+  if (!posts || posts.length === 0) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
         <CircularProgress />
@@ -60,33 +41,21 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   }
 
   return (
-    <div className="postsWidget">
-      {[...posts].reverse().map(({
-        _id,
-        userId,
-        firstName,
-        lastName,
-        description,
-        location,
-        picturePath,
-        userPicturePath,
-        likes,
-        comments,
-      }) => (
+    <>
+      {posts.map((post) => (
         <PostWidget
-          key={_id}
-          postId={_id}
-          postUserId={userId}
-          name={`${firstName} ${lastName}`}
-          description={description}
-          location={location}
-          picturePath={picturePath}
-          userPicturePath={userPicturePath}
-          likes={likes}
-          comments={comments}
+          key={post._id}
+          postId={post._id}
+          postUserId={post.userId} // ⚡ pass the full user object
+          name={`${post.userId.firstName || ""} ${post.userId.lastName || ""}`}
+          description={post.description}
+          location={post.userId.location || ""}
+          picturePath={post.picturePath}
+          likes={post.likes || []}
+          comments={post.comments || []}
         />
       ))}
-    </div>
+    </>
   );
 };
 

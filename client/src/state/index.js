@@ -1,57 +1,125 @@
 // state/index.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+const BASE_URL = process.env.REACT_APP_BASE_API_URL;
 
 const initialState = {
   mode: "light",
-  user: null,   // Will store logged-in user object
+  user: null,   // logged-in user
   token: null,  // JWT token
-  posts: [],    // Optional: for feed posts
+  posts: [],    // feed posts
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // Toggle dark/light mode
     setMode: (state) => {
       state.mode = state.mode === "light" ? "dark" : "light";
     },
-
-    // Set user login state
     setLogin: (state, action) => {
-      state.user = action.payload.user;
+      state.user = {
+        ...action.payload.user,
+        friends: Array.isArray(action.payload.user.friends)
+          ? action.payload.user.friends
+          : [],
+      };
       state.token = action.payload.token;
     },
-
-    // Clear user state on logout
     setLogout: (state) => {
       state.user = null;
       state.token = null;
     },
-
-    // Update friends of logged-in user
     setFriends: (state, action) => {
       if (state.user) {
-        state.user.friends = action.payload.friends;
-      } else {
-        console.error("No user logged in to set friends");
+        state.user.friends = Array.isArray(action.payload.friends)
+          ? action.payload.friends
+          : [];
       }
     },
-
-    // Set feed posts
     setPosts: (state, action) => {
       state.posts = action.payload.posts;
     },
-
-    // Update a single post in state
     setPost: (state, action) => {
-      state.posts = state.posts.map((post) =>
-        post._id === action.payload.post._id ? action.payload.post : post
-      );
+      const { post, postId, action: act } = action.payload;
+
+      if (act === "delete" && postId) {
+        state.posts = state.posts.filter((p) => p._id !== postId);
+      } else if (post) {
+        const index = state.posts.findIndex((p) => p._id === post._id);
+        if (index !== -1) state.posts[index] = post;
+        else state.posts.unshift(post); // ✅ new post always on top
+      }
+    },
+    setUser: (state, action) => {
+      const { user, token } = action.payload;
+      state.user = { ...user };
+      if (token) state.token = token;
+
+      // ✅ Update posts authored by this user (works whether post.userId is string or object)
+      state.posts = state.posts.map((post) => {
+        const postUserId =
+          typeof post.userId === "object" ? post.userId._id : post.userId;
+        if (postUserId === user._id) {
+          return {
+            ...post,
+            userId: {
+              ...(typeof post.userId === "object" ? post.userId : {}),
+              _id: user._id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              location: user.location,
+              picturePath: user.picturePath, // ✅ force sync picture
+            },
+          };
+        }
+        console.log("[authSlice] Updating picturePath to:", user.picturePath);
+        return post;
+      });
     },
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost } =
-  authSlice.actions;
+// Thunk to update profile picture
+export const uploadProfilePicture = createAsyncThunk(
+  "auth/uploadProfilePicture",
+  async ({ userId, file }, { dispatch, getState, rejectWithValue }) => {
+    try {
+      const formData = new FormData();
+      formData.append("picture", file);
+
+      const token = getState().auth.token;
+
+      const response = await axios.patch(
+        `${BASE_URL}/users/${userId}/profile-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Dispatch setUser to update Redux state
+      dispatch(authSlice.actions.setUser({ user: response.data }));
+
+      return response.data;
+    } catch (err) {
+      console.error("Upload failed", err);
+      return rejectWithValue(err.response?.data || "Upload failed");
+    }
+  }
+);
+
+export const {
+  setMode,
+  setLogin,
+  setLogout,
+  setFriends,
+  setPosts,
+  setPost,
+  setUser,
+} = authSlice.actions;
+
 export default authSlice.reducer;

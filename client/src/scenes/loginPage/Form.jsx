@@ -1,232 +1,3 @@
-// import { useState } from "react";
-// import {
-//   Box,
-//   Button,
-//   TextField,
-//   useMediaQuery,
-//   Typography,
-//   useTheme,
-//   CircularProgress,
-// } from "@mui/material";
-// import { Formik } from "formik";
-// import * as yup from "yup";
-// import { useNavigate } from "react-router-dom";
-// import { useDispatch } from "react-redux";
-// import { setLogin } from "state";
-
-// const loginSchema = yup.object().shape({
-//   email: yup.string().email("invalid email").required("required"),
-//   password: yup.string().required("required"),
-// });
-
-// const initialValues = {
-//   email: "",
-//   password: "",
-// };
-
-// const demoValuesLogin = {
-//   email: "guest@example.com",
-//   password: "guest123",
-// };
-
-// const Form = () => {
-//   const [pageType, setPageType] = useState("login");
-//   const { palette } = useTheme();
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const isNonMobile = useMediaQuery("(min-width:600px)");
-//   const isLogin = pageType === "login";
-
-//   const login = async (values, onSubmitProps) => {
-//     console.log("Login attempt:", values);
-//     try {
-//       const response = await fetch("http://localhost:3001/auth/login", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(values),
-//       });
-//       const data = await response.json();
-//       console.log("Login response:", data);
-
-//       if (!response.ok) {
-//         alert(data.msg || "Login failed");
-//         return;
-//       }
-
-//       dispatch(setLogin({ user: data.user, token: data.token }));
-//       navigate("/home");
-//       onSubmitProps.resetForm();
-//     } catch (err) {
-//       console.error(err);
-//       alert("Error logging in");
-//     }
-//   };
-
-//   const register = async (values, onSubmitProps) => {
-//     console.log("Register attempt:", values);
-//     try {
-//       const response = await fetch("http://localhost:3001/auth/register", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(values), // email + password only
-//       });
-//       const data = await response.json();
-//       console.log("Register response:", data);
-
-//       if (!response.ok) {
-//         alert(data.msg || "Registration failed");
-//         return;
-//       }
-
-//       // Automatically log in after registration
-//       await login({ email: values.email, password: values.password }, onSubmitProps);
-//     } catch (err) {
-//       console.error(err);
-//       alert("Error registering user");
-//     }
-//   };
-
-//   const handleDemoSubmit = async (values, onSubmitProps) => {
-//     console.log("Demo login attempt");
-//     try {
-//       const demoCredentials = { email: "guest@example.com", password: "guest123" };
-//       const response = await fetch("http://localhost:3001/auth/guest-login", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(demoCredentials),
-//       });
-//       const data = await response.json();
-//       console.log("Demo login response:", data);
-
-//       if (!response.ok) {
-//         alert(data.msg || "Demo login failed");
-//         return;
-//       }
-
-//       dispatch(setLogin({ user: data.user, token: data.token }));
-//       navigate("/home");
-//       onSubmitProps.resetForm();
-//     } catch (err) {
-//       console.error(err);
-//       alert("Error logging in demo user");
-//     }
-//   };
-
-//   const handleFormSubmit = async (values, onSubmitProps) => {
-//     if (isLogin) await login(values, onSubmitProps);
-//     else await register(values, onSubmitProps);
-//   };
-
-//   return (
-//     <div className="formik0">
-//       <div className="formik1">
-//         <Formik
-//           onSubmit={handleFormSubmit}
-//           initialValues={initialValues}
-//           validationSchema={loginSchema}
-//         >
-//           {({ values, errors, touched, handleBlur, handleChange, handleSubmit, resetForm, isSubmitting }) => (
-//             <form className="formClass" onSubmit={handleSubmit}>
-//               <Box
-//                 display="grid"
-//                 gap="30px"
-//                 gridTemplateColumns="repeat(1, minmax(0, 1fr))"
-//                 sx={{ "& > div": { gridColumn: isNonMobile ? undefined : "span 4" } }}
-//               >
-//                 <TextField
-//                   label="Email"
-//                   onBlur={handleBlur}
-//                   onChange={handleChange}
-//                   value={values.email}
-//                   name="email"
-//                   error={Boolean(touched.email && errors.email)}
-//                   helperText={touched.email && errors.email}
-//                   size="small"
-//                   sx={{ margin: "auto", width: "75%", display: "flex" }}
-//                 />
-//                 <TextField
-//                   label="Password"
-//                   type="password"
-//                   onBlur={handleBlur}
-//                   onChange={handleChange}
-//                   value={values.password}
-//                   name="password"
-//                   error={Boolean(touched.password && errors.password)}
-//                   helperText={touched.password && errors.password}
-//                   size="small"
-//                   sx={{ margin: "auto", width: "75%", display: "flex" }}
-//                 />
-//               </Box>
-
-//               <Box className="login-button">
-//                 <Button
-//                   type="submit"
-//                   size="sm"
-//                   disabled={isSubmitting}
-//                   sx={{
-//                     fontSize: "14px",
-//                     p: "0.75rem",
-//                     m: "1rem 0",
-//                     width: "75%",
-//                     textAlign: "center",
-//                     backgroundColor: "#5493ff",
-//                     color: palette.background.alt,
-//                     "&:hover": { color: "#5493ff" },
-//                   }}
-//                 >
-//                   {isSubmitting ? <CircularProgress size={20} sx={{ color: palette.background.alt }} /> : isLogin ? "LOG IN" : "REGISTER"}
-//                 </Button>
-//                 <Typography
-//                   onClick={() => {
-//                     setPageType(isLogin ? "register" : "login");
-//                     resetForm();
-//                   }}
-//                   sx={{
-//                     fontSize: "14px",
-//                     textAlign: "center",
-//                     textDecoration: "underline",
-//                     color: "#5493ff",
-//                     "&:hover": { cursor: "pointer", color: palette.primary.light },
-//                   }}
-//                 >
-//                   {isLogin ? "Don't have an account? Sign Up here." : "Already have an account? Login here."}
-//                 </Typography>
-//               </Box>
-//             </form>
-//           )}
-//         </Formik>
-//       </div>
-
-//       <div className="formik2">
-//         <Formik onSubmit={handleDemoSubmit} initialValues={demoValuesLogin} validationSchema={loginSchema}>
-//           {({ handleSubmit, resetForm, isSubmitting }) => (
-//             <form onSubmit={handleSubmit}>
-//               <div className="guestLogin">
-//                 <Button
-//                   type="submit"
-//                   size="sm"
-//                   disabled={isSubmitting}
-//                   sx={{
-//                     m: "1rem 0",
-//                     p: "0.75rem",
-//                     width: "40%",
-//                     backgroundColor: "#2fce2f",
-//                     color: palette.background.alt,
-//                     "&:hover": { color: "#2fce2f" },
-//                   }}
-//                 >
-//                   {isSubmitting ? <CircularProgress size={20} sx={{ color: palette.background.alt }} /> : "Demo Login"}
-//                 </Button>
-//               </div>
-//             </form>
-//           )}
-//         </Formik>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Form;
 import { useState } from "react";
 import {
   Box,
@@ -242,6 +13,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "state";
+const BASE_URL = process.env.REACT_APP_BASE_API_URL;
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
@@ -268,7 +40,7 @@ const Form = () => {
 
   const login = async (values, onSubmitProps) => {
     try {
-      const response = await fetch("http://localhost:3001/auth/login", {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
@@ -293,7 +65,7 @@ const Form = () => {
 
   const register = async (values, onSubmitProps) => {
     try {
-      const response = await fetch("http://localhost:3001/auth/register", {
+      const response = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
@@ -316,7 +88,7 @@ const Form = () => {
 
   const handleDemoSubmit = async (values, onSubmitProps) => {
     try {
-      const response = await fetch("http://localhost:3001/auth/guest-login", {
+      const response = await fetch(`${BASE_URL}/auth/guest-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(demoValuesLogin),

@@ -1,4 +1,5 @@
 // controllers/users.js
+import Post from "../models/Post.js";
 import User from "../models/User.js";
 
 /* READ: Get a single user */
@@ -35,7 +36,6 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Internal server error fetching all users" });
   }
 };
-
 
 /* READ: Get a user's friends */
 export const getUserFriends = async (req, res) => {
@@ -79,52 +79,58 @@ export const getUserFriends = async (req, res) => {
 };
 
 /* UPDATE: Add or remove a friend */
+
 export const addRemoveFriend = async (req, res) => {
   try {
     const { id, friendId } = req.params;
 
-    if (!id || !friendId) {
-      return res.status(400).json({ message: "User ID and Friend ID are required" });
-    }
+    console.log(`[addRemoveFriend] Called with id=${id} and friendId=${friendId}`);
 
+    // 1️⃣ Fetch both users
     const user = await User.findById(id);
     const friend = await User.findById(friendId);
 
     if (!user || !friend) {
-      console.info(`addRemoveFriend failed: user or friend not found (user: ${id}, friend: ${friendId})`);
-      return res.status(404).json({ message: "User or friend not found" });
+      console.warn(`[addRemoveFriend] User or friend not found - user: ${!!user}, friend: ${!!friend}`);
+      return res.status(404).json({ message: "User not found" });
     }
 
-    if (user.friends.includes(friendId)) {
-      user.friends = user.friends.filter((fid) => fid.toString() !== friendId.toString());
-      friend.friends = friend.friends.filter((fid) => fid.toString() !== id.toString());
+    // 2️⃣ Check if friend already exists
+    const isFriend = user.friends.some(f => f.toString() === friendId);
+
+    console.log(`[addRemoveFriend] isFriend before update: ${isFriend}`);
+
+    if (isFriend) {
+      // Remove friend
+      user.friends = user.friends.filter(f => f.toString() !== friendId);
+      friend.friends = friend.friends.filter(f => f.toString() !== id);
+      console.log(`[addRemoveFriend] Removed friendId=${friendId} from user and id=${id} from friend`);
     } else {
+      // Add friend
       user.friends.push(friendId);
       friend.friends.push(id);
+      console.log(`[addRemoveFriend] Added friendId=${friendId} to user and id=${id} to friend`);
     }
 
+    // 3️⃣ Save both users
     await user.save();
     await friend.save();
+    console.log("[addRemoveFriend] Saved both users");
 
-    // Return formatted friends list safely
-    const friends = await Promise.all(
-      user.friends.map(async (fid) => {
-        try {
-          const f = await User.findById(fid).lean();
-          if (!f) return null;
-          const { _id, firstName, lastName, occupation, location, picturePath } = f;
-          return { _id, firstName, lastName, occupation, location, picturePath };
-        } catch (err) {
-          console.error(`Error fetching friend ${fid}:`, err);
-          return null;
-        }
-      })
-    );
+    // 4️⃣ Populate updated friends with minimal fields for frontend
+    const updatedUser = await User.findById(id)
+      .populate({
+        path: "friends",
+        select: "_id firstName lastName occupation picturePath",
+      });
 
-    res.status(200).json(friends.filter(Boolean));
+    console.log("[addRemoveFriend] Updated user friends populated");
+
+    // 5️⃣ Return updated friend list
+    res.status(200).json(updatedUser);
   } catch (err) {
-    console.error("Error in addRemoveFriend:", err);
-    res.status(500).json({ message: "Internal server error updating friends" });
+    console.error("[addRemoveFriend] Error:", err);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -145,22 +151,38 @@ export const updateUser = async (req, res) => {
   }
 };
 
+
 export const uploadProfileImage = async (req, res) => {
   try {
-    const { id } = req.params;
-    const file = req.file;
+    const userId = req.params.id;
 
-    if (!file) return res.status(400).json({ message: "No file uploaded" });
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { picturePath: file.originalname },
+    // Option A: store only filename
+    const imagePath = req.file.filename;
+
+    // update the user’s profile image
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { picturePath: imagePath },
       { new: true }
     );
 
-    res.status(200).json(updatedUser);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // cascade update for posts
+    await Post.updateMany(
+      { userId: user._id },
+      { $set: { userPicturePath: imagePath } }
+    );
+
+    res.status(200).json(user);
   } catch (err) {
     console.error("Error uploading profile image:", err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
