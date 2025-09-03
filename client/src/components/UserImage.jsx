@@ -3,13 +3,22 @@ import { Box } from "@mui/material";
 const UserImage = ({ image, size = "60px", onClick }) => {
   // determine image path
   let srcPath;
-  if (!image) {
+  // if (!image) {
+  //   srcPath = "/assets/default-image.jpg";
+  // } else if (image.startsWith("http") || image.startsWith("/assets/")) {
+  //   srcPath = image; // already a path
+  // } else {
+  //   srcPath = `/assets/${image}`; // just a filename, prepend /assets
+  // }
+
+  if (!image || image === "default-image.jpg") {
     srcPath = "/assets/default-image.jpg";
   } else if (image.startsWith("http") || image.startsWith("/assets/")) {
-    srcPath = image; // already a path
+    srcPath = image;
   } else {
-    srcPath = `/assets/${image}`; // just a filename, prepend /assets
+    srcPath = `/assets/${image}`;
   }
+
 
 
   return (
@@ -19,7 +28,7 @@ const UserImage = ({ image, size = "60px", onClick }) => {
       sx={{ cursor: onClick ? "pointer" : "default" }}
       onClick={onClick}
     >
-      <img
+      {/* <img
         style={{ objectFit: "cover", borderRadius: "50%" }}
         width={size}
         height={size}
@@ -31,7 +40,21 @@ const UserImage = ({ image, size = "60px", onClick }) => {
             e.currentTarget.src = "/assets/default-image.jpg";
           }
         }}
+      /> */}
+      <img
+        style={{ objectFit: "cover", borderRadius: "50%" }}
+        width={size}
+        height={size}
+        alt="user"
+        src={srcPath}
+        onError={(e) => {
+          if (!e.currentTarget.dataset.fallback) {
+            e.currentTarget.dataset.fallback = true;
+            e.currentTarget.src = "/assets/default-image.jpg";
+          }
+        }}
       />
+
     </Box>
   );
 };

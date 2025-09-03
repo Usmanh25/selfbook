@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../state";
 import PostWidget from "./PostWidget";
 import { Box, CircularProgress } from "@mui/material";
+
 const BASE_URL = process.env.REACT_APP_BASE_API_URL;
+
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.auth.posts);
@@ -17,7 +19,18 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       });
       if (!response.ok) throw new Error("Failed to fetch posts");
       const data = await response.json();
-      dispatch(setPosts({ posts: data }));
+
+      // ⚡ Normalize likes: convert object or Map into array of userIds
+      const normalizedPosts = data.map((post) => ({
+        ...post,
+        likes: Array.isArray(post.likes)
+          ? post.likes
+          : post.likes
+          ? Object.keys(post.likes)
+          : [],
+      }));
+
+      dispatch(setPosts({ posts: normalizedPosts }));
     } catch (err) {
       console.error("Error fetching posts:", err);
       dispatch(setPosts({ posts: [] }));
@@ -47,11 +60,11 @@ const PostsWidget = ({ userId, isProfile = false }) => {
           key={post._id}
           postId={post._id}
           postUserId={post.userId} // ⚡ pass the full user object
-          name={`${post.userId.firstName || ""} ${post.userId.lastName || ""}`}
+          name={`${post.userId?.firstName || ""} ${post.userId?.lastName || ""}`}
           description={post.description}
-          location={post.userId.location || ""}
+          location={post.userId?.location || ""}
           picturePath={post.picturePath}
-          likes={post.likes || []}
+          likes={post.likes || []} // ✅ already normalized
           comments={post.comments || []}
         />
       ))}

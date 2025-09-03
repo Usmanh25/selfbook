@@ -70,6 +70,7 @@ export const getUserFriends = async (req, res) => {
         }
       })
     );
+    console.log("Friends resolved:", friends);
 
     res.status(200).json(friends.filter(Boolean)); // remove any nulls
   } catch (err) {

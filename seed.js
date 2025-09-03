@@ -1,88 +1,48 @@
+// seed.js
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-import bcrypt from "bcrypt";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
-import { users, posts } from "./data/index.js";
-
+import { users, posts } from "./data/index.js"; // original data import
+import dotenv from "dotenv";
 dotenv.config();
-mongoose.set("strictQuery", false);
 
 const MONGO_URL = process.env.MONGO_URL;
 
+// const MONGO_URL = "mongodb://127.0.0.1:27017/selfbook";
+
+await mongoose.connect(MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+console.log("✅ Connected to MongoDB");
+
 const seedDB = async () => {
   try {
-    // Connect to MongoDB
-    await mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log("✅ Connected to MongoDB");
-
-    // Clear existing data
-    await User.deleteMany({});
-    await Post.deleteMany({});
+    await User.deleteMany();
+    await Post.deleteMany();
     console.log("🗑️ Cleared existing users and posts");
 
-    // Insert regular users
-    const createdUsers = await User.insertMany(users);
+    const createdUsers = [];
+    for (const user of users) {
+      const u = await User.create({ ...user, friends: [] });
+      createdUsers.push(u);
+    }
     console.log(`👤 Inserted ${createdUsers.length} users`);
 
-    // Insert guest user if not already present
-    const guestEmail = "guest@example.com";
-    let guestUser = await User.findOne({ email: guestEmail });
-
-    if (!guestUser) {
-      const hashedPassword = await bcrypt.hash("guest123", 10);
-
-      guestUser = new User({
-        firstName: "Guest",
-        lastName: "User",
-        email: guestEmail,
-        password: hashedPassword,
-        picturePath: "",
-        friends: [],
-        location: "World",
-        occupation: "Guest",
-        viewedProfile: 0,
-        impressions: 0,
-      });
-
-      await guestUser.save();
-      console.log("👤 Guest user created successfully!");
-    } else {
-      console.log("👤 Guest user already exists");
-    }
-
-    // Map posts to real users using post.userId
-    const postsWithUserIds = posts.map(post => {
-      const user = createdUsers.find(u => u._id.toString() === post.userId.toString()) || guestUser;
-
-      // Convert likes Map or object to array of ObjectIds
-      let likesArray = [];
-      if (post.likes) {
-        if (post.likes instanceof Map) {
-          likesArray = Array.from(post.likes.keys());
-        } else if (typeof post.likes === "object" && !Array.isArray(post.likes)) {
-          likesArray = Object.keys(post.likes);
-        } else if (Array.isArray(post.likes)) {
-          likesArray = post.likes;
-        }
-      }
-
-      return {
-        ...post,
-        userId: user._id,
-        likes: likesArray,
-      };
+    const postsWithUserIds = posts.map((post) => {
+      const user = createdUsers.find((u) => u.firstName === post.firstName);
+      return { ...post, userId: user._id, userPicturePath: user.picturePath };
     });
 
-    // Insert posts
-    const createdPosts = await Post.insertMany(postsWithUserIds);
-    console.log(`📝 Inserted ${createdPosts.length} posts`);
+    await Post.insertMany(postsWithUserIds);
+    console.log(`📝 Inserted ${postsWithUserIds.length} posts`);
 
-    console.log("🎉 Database seeding completed!");
-    mongoose.connection.close();
+    console.log("🎉 Seeding complete!");
+    process.exit();
   } catch (err) {
     console.error("❌ Seeding error:", err);
-    mongoose.connection.close();
+    process.exit(1);
   }
 };
 
