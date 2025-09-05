@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+
+
+
+          // USERS
+
+
+
+
 const userIds = Array.from({ length: 27 }, () => new mongoose.Types.ObjectId());
 
 export const users = [
@@ -171,12 +179,12 @@ export const users = [
     password: "hashedpassword",
     picturePath: "gracelee.jpg",
     friends: [],
-    location: "Houston, Texas",
-    occupation: "Journalist",
-    viewedProfile: 36000,
-    impressions: 86000,
-    createdAt: 2015211422,
-    updatedAt: 2015211422,
+    location: "Austin, Texas",
+    occupation: "Content Creator",
+    viewedProfile: 37000,
+    impressions: 87000,
+    createdAt: 2015211423,
+    updatedAt: 2015211423,
     __v: 0,
   },
   {
@@ -187,11 +195,11 @@ export const users = [
     password: "hashedpassword",
     picturePath: "jameswilson.jpg",
     friends: [],
-    location: "Houston, Texas",
-    occupation: "Journalist",
+    location: "San Francisco, California",
+    occupation: "Reporter",
     viewedProfile: 36000,
     impressions: 86000,
-    createdAt: 2015211422,
+    createdAt: 2015211424,
     updatedAt: 2015211422,
     __v: 0,
   },
@@ -203,21 +211,29 @@ export const users = [
     password: "hashedpassword",
     picturePath: "lisascott.jpg",
     friends: [],
-    location: "Houston, Texas",
-    occupation: "Journalist",
+    location: "Chicago, Illinois",
+    occupation: "Data Analyst",
     viewedProfile: 36000,
     impressions: 86000,
     createdAt: 2015211422,
     updatedAt: 2015211422,
     __v: 0,
   },
-  // … continue up to userIds[26] like your original data
 ];
 
+users.forEach(user => {
+  user.friends = users.filter(u => u._id !== user._id).map(u => ({
+    _id: u._id,
+    firstName: u.firstName,
+    lastName: u.lastName,
+    occupation: u.occupation,
+    picturePath: u.picturePath,
+  }));
+});
 
 
 
-
+          // POSTS
 
 
 
@@ -239,27 +255,23 @@ export const posts = [
       [userIds[0], true],
       [userIds[1], true],
       [userIds[2], true],
-      [userIds[3], true],
-      [userIds[4], true],
-      [userIds[5], true],
-      [userIds[6], true],
-      [userIds[7], true],
-      [userIds[8], true],
-      [userIds[9], true],
-      [userIds[10], true],
-      [userIds[11], true],
-      [userIds[12], true],
-      [userIds[13], true],
-      [userIds[14], true],
-      [userIds[15], true],
-      [userIds[16], true],
-      [userIds[17], true],
-      [userIds[18], true],
-      [userIds[19], true],
-      [userIds[20], true],
-      [userIds[21], true],
     ]),
     comments: ["We miss you back home!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[7],
+    firstName: "Michael",
+    lastName: "Williams",
+    location: "Miami, Florida",
+    description: "Its a beautiful day today",
+    userPicturePath: "michaelwilliams.jpg",
+    likes: new Map([
+      [userIds[0], true],
+      [userIds[1], true],
+      [userIds[2], true],
+    ]),
+    comments: ["Lets hang out!"],
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -275,15 +287,37 @@ export const posts = [
   },
   {
     _id: new mongoose.Types.ObjectId(),
+    userId: userIds[8],
+    firstName: "Sophia",
+    lastName: "Garcia",
+    description: "Going to the Celtics game today!",
+    location: "Boston, Massachusetts",
+    userPicturePath: "sophiagarcia.jpg",
+    likes: new Map([[userIds[1], true]]),
+    comments: ["Lucky!", "I'm jealous!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
     userId: userIds[1],
     firstName: "Anita",
     lastName: "Nguyen",
-    description: "Visited the city today. It was busy but fun!",
+    description: "Took the train today!",
     location: "New York City",
     picturePath: "newyorksubway.jpg",
     userPicturePath: "anitanguyen.jpg",
     likes: new Map([[userIds[0], true], [userIds[2], true]]),
     comments: ["Glad you had fun!", "Great pic!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[9],
+    firstName: "Daniela",
+    lastName: "Lopez",
+    description: "It is sooo hot!",
+    location: "Houston, Texas",
+    userPicturePath: "danielalopez.jpg",
+    likes: new Map([[userIds[0], true], [userIds[2], true]]),
+    comments: ["I am burning up", "I agree!"],
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -299,6 +333,17 @@ export const posts = [
   },
   {
     _id: new mongoose.Types.ObjectId(),
+    userId: userIds[10],
+    firstName: "Grace",
+    lastName: "Lee",
+    description: "Can't wait to try some Texas BBQ!",
+    location: "Austin, Texas",
+    userPicturePath: "gracelee.jpg",
+    likes: new Map([[userIds[0], true], [userIds[3], true]]),
+    comments: ["It's the best!", "I know some good spots!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
     userId: userIds[3],
     firstName: "Hugh",
     lastName: "Johnson",
@@ -306,6 +351,17 @@ export const posts = [
     location: "Los Angeles, California",
     picturePath: "losangelesfreeway.jpg",
     userPicturePath: "hughjohnson.jpg",
+    likes: new Map([[userIds[0], true], [userIds[1], true]]),
+    comments: ["Looks great!", "Beautiful weather!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[11],
+    firstName: "James",
+    lastName: "Wilson",
+    description: "Any good food recommendations?",
+    location: "San Francisco, California",
+    userPicturePath: "jameswilson.jpg",
     likes: new Map([[userIds[0], true], [userIds[1], true]]),
     comments: ["Looks great!", "Beautiful weather!"],
   },
@@ -323,6 +379,17 @@ export const posts = [
   },
   {
     _id: new mongoose.Types.ObjectId(),
+    userId: userIds[12],
+    firstName: "Lisa",
+    lastName: "Scott",
+    description: "Just finished work, time for the gym.",
+    location: "Chicago, Illinois",
+    userPicturePath: "lisascott.jpg",
+    likes: new Map([[userIds[1], true]]),
+    comments: ["Amazing!", "Well done!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
     userId: userIds[5],
     firstName: "David",
     lastName: "Kim",
@@ -333,4 +400,227 @@ export const posts = [
     likes: new Map([[userIds[0], true], [userIds[2], true]]),
     comments: ["Yum!", "Recipe please!"],
   },
+
+
+
+
+
+
+
+
+
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[6],
+    firstName: "Jeremy",
+    lastName: "Clark",
+    location: "New York City",
+    description: "Got pulled over today =/",
+    userPicturePath: "jeremyclark.jpeg",
+    likes: new Map([
+      [userIds[0], true],
+      [userIds[1], true],
+      [userIds[2], true],
+    ]),
+    comments: ["Just like old times!", "What did you do?"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[7],
+    firstName: "Michael",
+    lastName: "Williams",
+    location: "Miami, Florida",
+    description: "Spending my day at the beach",
+    picturePath: "beach.jpg",
+    userPicturePath: "michaelwilliams.jpg",
+    likes: new Map([
+      [userIds[0], true],
+      [userIds[1], true],
+      [userIds[2], true],
+    ]),
+    comments: ["Lets hang out!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[11],
+    firstName: "James",
+    lastName: "Wilson",
+    description: "Best City in the World!",
+    location: "San Francisco, California",
+    picturePath: "sanfrancisco.jpg",
+    userPicturePath: "jameswilson.jpg",
+    likes: new Map([[userIds[0], true], [userIds[1], true]]),
+    comments: ["Yes!", "Beautiful!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[0],
+    firstName: "Harry",
+    lastName: "Smith",
+    description: "Does anyone have a bike for sale?",
+    location: "South Beach, Florida",
+    userPicturePath: "harrysmith.jpg",
+    likes: new Map([[userIds[1], true]]),
+    comments: ["I have one!", "Yes!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[8],
+    firstName: "Sophia",
+    lastName: "Garcia",
+    description: "She's so cute!",
+    location: "Boston, Massachusetts",
+    picturePath: "cat.jpg",
+    userPicturePath: "sophiagarcia.jpg",
+    likes: new Map([[userIds[1], true]]),
+    comments: ["OMG!", "I'm in love!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[1],
+    firstName: "Anita",
+    lastName: "Nguyen",
+    description: "My birthday is next week!",
+    location: "New York City",
+    userPicturePath: "anitanguyen.jpg",
+    likes: new Map([[userIds[0], true], [userIds[2], true]]),
+    comments: ["Lets go!", "Nice!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[9],
+    firstName: "Daniela",
+    lastName: "Lopez",
+    description: "Apple picking <3!",
+    location: "Houston, Texas",
+    picturePath: "appletrees.jpg",
+    userPicturePath: "danielalopez.jpg",
+    likes: new Map([[userIds[0], true], [userIds[2], true]]),
+    comments: ["Cute", "I want to go!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[2],
+    firstName: "Monica",
+    lastName: "Taylor",
+    description: "It has been such a long week!",
+    location: "Denver, Colorado",
+    userPicturePath: "monicataylor.jpg",
+    likes: new Map([[userIds[0], true], [userIds[3], true]]),
+    comments: ["Yes!", "Cant wait for the weekend!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[3],
+    firstName: "Hugh",
+    lastName: "Johnson",
+    description: "Finally going to get some sleep tonight!",
+    location: "Los Angeles, California",
+    userPicturePath: "hughjohnson.jpg",
+    likes: new Map([[userIds[0], true], [userIds[1], true]]),
+    comments: ["Sounds great!", "Well deserved!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[4],
+    firstName: "Julia",
+    lastName: "Martinez",
+    description: "Learning how to make pasta from scratch!",
+    location: "Chicago, Illinois",
+    userPicturePath: "juliamartinez.jpg",
+    likes: new Map([[userIds[1], true]]),
+    comments: ["Amazing!", "Well done!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[12],
+    firstName: "Lisa",
+    lastName: "Scott",
+    description: "My little fur baby.",
+    location: "Chicago, Illinois",
+    picturePath: "dog.jpg",
+    userPicturePath: "lisascott.jpg",
+    likes: new Map([[userIds[1], true]]),
+    comments: ["Cute!", "Lovely!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[5],
+    firstName: "David",
+    lastName: "Kim",
+    description: "I think I'll do laundry today!",
+    location: "Seattle, Washington",
+    userPicturePath: "davidkim.jpg",
+    likes: new Map([[userIds[0], true], [userIds[2], true]]),
+    comments: ["Same!", "Good idea!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[10],
+    firstName: "Grace",
+    lastName: "Lee",
+    description: "My first time in Austin!",
+    location: "Austin, Texas",
+    picturePath: "austin.jpeg",
+    userPicturePath: "gracelee.jpg",
+    likes: new Map([[userIds[0], true], [userIds[3], true]]),
+    comments: ["It's the best!", "Great pic!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[1],
+    firstName: "Anita",
+    lastName: "Nguyen",
+    description: "This weekend can't come fast enough!",
+    location: "New York City",
+    userPicturePath: "anitanguyen.jpg",
+    likes: new Map([[userIds[0], true], [userIds[2], true]]),
+    comments: ["Glad you had fun!", "Great pic!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[11],
+    firstName: "James",
+    lastName: "Wilson",
+    description: "Foggy day in the city!",
+    location: "San Francisco, California",
+    picturePath: "goldengatebridge.jpg",
+    userPicturePath: "jameswilson.jpg",
+    likes: new Map([[userIds[0], true], [userIds[1], true]]),
+    comments: ["Such a good shot!", "Beautiful!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[2],
+    firstName: "Monica",
+    lastName: "Taylor",
+    description: "Perfect day for a hike!",
+    location: "Denver, Colorado",
+    userPicturePath: "monicataylor.jpg",
+    likes: new Map([[userIds[0], true], [userIds[3], true]]),
+    comments: ["Its so nice!", "Lets go!"],
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userIds[6],
+    firstName: "Jeremy",
+    lastName: "Clark",
+    location: "New York City",
+    description: "Just saw a rat the size of a raccoon",
+    userPicturePath: "jeremyclark.jpeg",
+    likes: new Map([
+      [userIds[0], true],
+      [userIds[1], true],
+      [userIds[2], true],
+    ]),
+    comments: ["LOL!", "Wow"],
+  },
 ];
+
+posts.forEach(post => {
+  const shuffledUserIds = [...users.map(u => u._id)].sort(() => 0.5 - Math.random());
+  const likeCount = 20 + Math.floor(Math.random() * 11); // 20-30 likes
+  post.likes = shuffledUserIds.slice(0, Math.min(likeCount, users.length));
+});
+
+export default { users, posts };

@@ -15,7 +15,8 @@ const ProfilePage = () => {
   const { userId } = useParams();
   const token = useSelector((state) => state.auth.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-  
+  const loggedInUserId = useSelector((state) => state.auth.user?._id);
+
   useEffect(() => {
     console.log("Fetching user with ID:", userId);
     getUser();
@@ -62,13 +63,10 @@ const ProfilePage = () => {
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
           <UserWidget userId={userId} picturePath={user.picturePath} />
           <Box m="2rem 0" />
-          <FriendListWidget userId={userId} />
+          <FriendListWidget friends={user.friends} />
         </Box>
-        <Box
-          flexBasis={isNonMobileScreens ? "42%" : undefined}
-          mt={isNonMobileScreens ? undefined : "2rem"}
-        >
-          <MyPostWidget picturePath={user.picturePath} />
+        <Box flexBasis={isNonMobileScreens ? "42%" : undefined} mt={isNonMobileScreens ? undefined : "2rem"}>
+          {userId === loggedInUserId && <MyPostWidget picturePath={user.picturePath} />}
           <Box m="2rem 0" />
           <PostsWidget userId={userId} isProfile />
         </Box>

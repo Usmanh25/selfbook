@@ -25,6 +25,7 @@ const authSlice = createSlice({
           : [],
       };
       state.token = action.payload.token;
+      console.log("[Redux setLogin] User set to:", state.user);
     },
     setLogout: (state) => {
       state.user = null;
@@ -53,13 +54,22 @@ const authSlice = createSlice({
     },
     setUser: (state, action) => {
       const { user, token } = action.payload;
-      state.user = { ...user };
+
+      // Preserve friends if updated user doesn't include them
+      const mergedUser = {
+        ...user,
+        friends: Array.isArray(user.friends) && user.friends.length
+          ? user.friends
+          : state.user?.friends || [],
+      };
+
+      state.user = mergedUser;
+
       if (token) state.token = token;
 
-      // ✅ Update posts authored by this user (works whether post.userId is string or object)
+      // Update posts authored by this user
       state.posts = state.posts.map((post) => {
-        const postUserId =
-          typeof post.userId === "object" ? post.userId._id : post.userId;
+        const postUserId = typeof post.userId === "object" ? post.userId._id : post.userId;
         if (postUserId === user._id) {
           return {
             ...post,
@@ -69,14 +79,40 @@ const authSlice = createSlice({
               firstName: user.firstName,
               lastName: user.lastName,
               location: user.location,
-              picturePath: user.picturePath, // ✅ force sync picture
+              picturePath: user.picturePath,
             },
           };
         }
-        console.log("[authSlice] Updating picturePath to:", user.picturePath);
         return post;
       });
-    },
+    }
+
+    // setUser: (state, action) => {
+    //   const { user, token } = action.payload;
+    //   state.user = { ...user };
+    //   if (token) state.token = token;
+
+    //   // ✅ Update posts authored by this user (works whether post.userId is string or object)
+    //   state.posts = state.posts.map((post) => {
+    //     const postUserId =
+    //       typeof post.userId === "object" ? post.userId._id : post.userId;
+    //     if (postUserId === user._id) {
+    //       return {
+    //         ...post,
+    //         userId: {
+    //           ...(typeof post.userId === "object" ? post.userId : {}),
+    //           _id: user._id,
+    //           firstName: user.firstName,
+    //           lastName: user.lastName,
+    //           location: user.location,
+    //           picturePath: user.picturePath, // ✅ force sync picture
+    //         },
+    //       };
+    //     }
+    //     console.log("[authSlice] Updating picturePath to:", user.picturePath);
+    //     return post;
+    //   });
+    // },
   },
 });
 
@@ -111,7 +147,6 @@ export const uploadProfilePicture = createAsyncThunk(
     }
   }
 );
-
 export const {
   setMode,
   setLogin,

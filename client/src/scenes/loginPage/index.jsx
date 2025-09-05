@@ -49,7 +49,7 @@ const LoginPage = () => {
                 {footerLinks4.map(link => (<ul key={link} className="footer-link-item">{link}</ul>))}
               </Typography>
               <Typography component={'ul'} width="90%" m="auto" mt={1} textAlign="left" display="flex" >
-                <ul key='uniqueKey1' className="footer-link-item">SelfBook © 2022</ul>
+                <ul key='uniqueKey1' className="footer-link-item">SelfBook © 2025</ul>
               </Typography>
 
             </Typography>

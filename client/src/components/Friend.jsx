@@ -12,7 +12,8 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const navigate = useNavigate();
   const { _id, friends = [] } = useSelector((state) => state.auth.user || {});
   const token = useSelector((state) => state.auth.token);
-
+  const isSelf = _id && friendId && _id.toString() === friendId.toString();
+  
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
@@ -70,19 +71,29 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           </Box>
         </FlexBetween>
 
-        <IconButton
-          onClick={patchFriend}
-          sx={{ backgroundColor: mediumMain, p: "0.6rem", position: "absolute", top: 0, right: 0 }}
-        >
-          {isFriendLocal ? (
-            <PersonRemoveOutlined sx={{ color: "#5493ff" }} />
-          ) : (
-            <PersonAddOutlined sx={{ color: "#5493ff" }} />
-          )}
-        </IconButton>
+        {!isSelf && (
+          <IconButton
+            onClick={patchFriend}
+            sx={{
+              backgroundColor: mediumMain,
+              p: "0.6rem",
+              position: "absolute",
+              top: 0,
+              right: 0,
+            }}
+          >
+            {isFriendLocal ? (
+              <PersonRemoveOutlined sx={{ color: "#5493ff" }} />
+            ) : (
+              <PersonAddOutlined sx={{ color: "#5493ff" }} />
+            )}
+          </IconButton>
+        )}
       </FlexBetween>
     </Box>
   );
 };
 
 export default Friend;
+
+
