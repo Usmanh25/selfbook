@@ -96,9 +96,10 @@ const MONGO_URI = process.env.MONGO_URI;
 // Configure storage engine with GridFS
 const storage = new GridFsStorage({
   url: MONGO_URI,
+  options: { useUnifiedTopology: true }, // <--- this is critical
   file: (req, file) => {
     return new Promise((resolve, reject) => {
-      // Only allow image files
+      console.log("GridFS file upload attempt:", file.originalname); // debug log
       const filetypes = /jpeg|jpg|png/;
       const extname = filetypes.test(
         path.extname(file.originalname).toLowerCase()
@@ -106,14 +107,14 @@ const storage = new GridFsStorage({
       const mimetype = filetypes.test(file.mimetype);
 
       if (extname && mimetype) {
-        // Generate random filename
         crypto.randomBytes(16, (err, buf) => {
           if (err) return reject(err);
           const filename = buf.toString("hex") + path.extname(file.originalname);
           const fileInfo = {
             filename,
-            bucketName: "uploads", // GridFS collection name
+            bucketName: "uploads",
           };
+          console.log("GridFS file info resolved:", fileInfo); // debug log
           resolve(fileInfo);
         });
       } else {
@@ -122,6 +123,35 @@ const storage = new GridFsStorage({
     });
   }
 });
+
+// const storage = new GridFsStorage({
+//   url: MONGO_URI,
+//   file: (req, file) => {
+//     return new Promise((resolve, reject) => {
+//       // Only allow image files
+//       const filetypes = /jpeg|jpg|png/;
+//       const extname = filetypes.test(
+//         path.extname(file.originalname).toLowerCase()
+//       );
+//       const mimetype = filetypes.test(file.mimetype);
+
+//       if (extname && mimetype) {
+//         // Generate random filename
+//         crypto.randomBytes(16, (err, buf) => {
+//           if (err) return reject(err);
+//           const filename = buf.toString("hex") + path.extname(file.originalname);
+//           const fileInfo = {
+//             filename,
+//             bucketName: "uploads", // GridFS collection name
+//           };
+//           resolve(fileInfo);
+//         });
+//       } else {
+//         reject(new Error("Only .jpeg, .jpg, .png files are allowed!"));
+//       }
+//     });
+//   }
+// });
 
 // File filter for images options
 const fileFilter = (req, file, cb) => {
