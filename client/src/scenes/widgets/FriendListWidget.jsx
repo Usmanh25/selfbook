@@ -61,7 +61,7 @@ const FriendListWidget = () => {
         {friends.map((friend) => {
           const resolvedFriendPicture =
             friend.picturePath && friend.picturePath !== ""
-              ? `${BASE_URL}/assets/${friend.picturePath}`
+              ? `${BASE_URL}/files/${friend.picturePath}`
               : "/assets/default-image.jpg";
 
           return (

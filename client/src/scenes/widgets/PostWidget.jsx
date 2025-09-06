@@ -45,7 +45,7 @@ const PostWidget = ({
 
   const resolvedUserPicture =
     postUserId?.picturePath && postUserId.picturePath !== ""
-      ? `${BASE_URL}/assets/${postUserId.picturePath}`
+      ? `${BASE_URL}/files/${postUserId.picturePath}`
       : "/assets/default-image.jpg";
 
   const patchLike = async () => {
@@ -98,7 +98,7 @@ const PostWidget = ({
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={picturePath ? `${BASE_URL}/assets/${picturePath}` : "/assets/default-image.jpg"}
+          src={picturePath ? `${BASE_URL}/files/${picturePath}` : "/assets/default-image.jpg"}
           onError={(e) => {
             if (!e.currentTarget.dataset.defaultSet) {
               e.currentTarget.dataset.defaultSet = true;
