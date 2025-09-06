@@ -123,7 +123,7 @@ const storage = new GridFsStorage({
   }
 });
 
-// File filter for images
+// File filter for images options
 const fileFilter = (req, file, cb) => {
   const filetypes = /jpeg|jpg|png/;
   const extname = filetypes.test(
