@@ -76,53 +76,27 @@
 
 // export default upload
 
-import multer from "multer";
-import pkg from "multer-gridfs-storage";
-const { GridFsStorage } = pkg;
-import crypto from "crypto";
-import path from "path";
-import dotenv from "dotenv";
 
-dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI;
 
-// Ensure uploads directory exists
-// const uploadDir = "public/assets";
-// if (!fs.existsSync(uploadDir)) {
-//   fs.mkdirSync(uploadDir, { recursive: true });
-// }
+// import multer from "multer";
+// import pkg from "multer-gridfs-storage";
+// const { GridFsStorage } = pkg;
+// import crypto from "crypto";
+// import path from "path";
+// import dotenv from "dotenv";
 
-// Configure storage engine with GridFS
-const storage = new GridFsStorage({
-  url: MONGO_URI,
-  options: { useUnifiedTopology: true }, // <--- this is critical
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      console.log("GridFS file upload attempt:", file.originalname); // debug log
-      const filetypes = /jpeg|jpg|png/;
-      const extname = filetypes.test(
-        path.extname(file.originalname).toLowerCase()
-      );
-      const mimetype = filetypes.test(file.mimetype);
+// dotenv.config();
 
-      if (extname && mimetype) {
-        crypto.randomBytes(16, (err, buf) => {
-          if (err) return reject(err);
-          const filename = buf.toString("hex") + path.extname(file.originalname);
-          const fileInfo = {
-            filename,
-            bucketName: "uploads",
-          };
-          console.log("GridFS file info resolved:", fileInfo); // debug log
-          resolve(fileInfo);
-        });
-      } else {
-        reject(new Error("Only .jpeg, .jpg, .png files are allowed!"));
-      }
-    });
-  }
-});
+// const MONGO_URI = process.env.MONGO_URI;
+
+// // Ensure uploads directory exists
+// // const uploadDir = "public/assets";
+// // if (!fs.existsSync(uploadDir)) {
+// //   fs.mkdirSync(uploadDir, { recursive: true });
+// // }
+
+// // Configure storage engine with GridFS
 
 // const storage = new GridFsStorage({
 //   url: MONGO_URI,
@@ -153,24 +127,75 @@ const storage = new GridFsStorage({
 //   }
 // });
 
+// // File filter for images options
+// const fileFilter = (req, file, cb) => {
+//   const filetypes = /jpeg|jpg|png/;
+//   const extname = filetypes.test(
+//     path.extname(file.originalname).toLowerCase()
+//   );
+//   const mimetype = filetypes.test(file.mimetype);
+
+//   if (extname && mimetype) {
+//     cb(null, true);
+//   } else {
+//     cb(new Error("Only .jpeg, .jpg, .png files are allowed!"));
+//   }
+// };
+
+// const upload = multer({
+//   storage,
+//   fileFilter,
+// });
+
+// export default upload;
+
+
+import multer from "multer";
+import { MongoClient, GridFSBucket } from "mongodb";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const MONGO_URI = process.env.MONGO_URI;
+
+// Ensure uploads directory exists
+// const uploadDir = "public/assets";
+// if (!fs.existsSync(uploadDir)) {
+//   fs.mkdirSync(uploadDir, { recursive: true });
+// }
+
+// Configure storage engine with GridFS
+
+const storage = multer.memoryStorage();
+
+
 // File filter for images options
 const fileFilter = (req, file, cb) => {
   const filetypes = /jpeg|jpg|png/;
-  const extname = filetypes.test(
-    path.extname(file.originalname).toLowerCase()
-  );
+  const extname = filetypes.test(file.originalname.toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
-
-  if (extname && mimetype) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only .jpeg, .jpg, .png files are allowed!"));
-  }
+  if (extname && mimetype) cb(null, true);
+  else cb(new Error("Only .jpeg, .jpg, .png files are allowed!"));
 };
 
-const upload = multer({
-  storage,
-  fileFilter,
-});
+// Export multer middleware
+const upload = multer({ storage, fileFilter });
 
 export default upload;
+
+// Helper function for writing buffer to GridFS
+export const uploadToGridFS = async (buffer, filename) => {
+  const client = new MongoClient(MONGO_URI);
+  await client.connect();
+  const db = client.db(); // default DB from connection string
+  const bucket = new GridFSBucket(db, { bucketName: "uploads" });
+  
+  return new Promise((resolve, reject) => {
+    const stream = bucket.openUploadStream(filename);
+    stream.end(buffer);
+    stream.on("finish", () => {
+      resolve(stream.id); // returns ObjectId for the file
+    });
+    stream.on("error", (err) => reject(err));
+  });
+};
