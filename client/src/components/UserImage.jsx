@@ -8,7 +8,8 @@ const UserImage = ({ image, size = "60px", onClick }) => {
   } else if (image.startsWith("http") || image.startsWith("/assets/")) {
     srcPath = image;
   } else {
-    srcPath = `/assets/${image}`;
+    // If it’s a GridFS filename, fetch from /files/:filename
+    srcPath = `${process.env.REACT_APP_BASE_API_URL}/files/${image}`;
   }
 
   return (
