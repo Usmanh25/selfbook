@@ -1,5 +1,6 @@
 import multer from "multer";
-import { GridFsStorage } from "multer-gridfs-storage";
+import pkg from "multer-gridfs-storage";
+const { GridFsStorage } = pkg;
 import crypto from "crypto";
 import path from "path";
 import dotenv from "dotenv";

@@ -1,6 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
-import Grid from "gridfs-stream";
+import pkg from "gridfs-stream";
+
+const Grid = pkg;
 
 const router = express.Router();
 let gfs;
