@@ -12,7 +12,7 @@ import upload from "../middleware/upload.js";
 const router = express.Router();
 
 /* CREATE */
-router.post("/", verifyToken, createPost);
+// router.post("/", verifyToken, createPost);
 router.post("/", verifyToken, upload.single("picture"), createPost);
 
 /* READ */
