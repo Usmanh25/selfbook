@@ -45,6 +45,7 @@ const FriendListWidget = () => {
     fetchFriends();
   }, [profileUserId, token, loggedInUserFriends, loggedInUserId]);
 
+
   if (!friends || friends.length === 0) return null;
 
   return (
@@ -61,7 +62,7 @@ const FriendListWidget = () => {
         {friends.map((friend) => {
           const resolvedFriendPicture =
             friend.picturePath && friend.picturePath !== ""
-              ? `${BASE_URL}/files/${friend.picturePath}`
+              ? `${BASE_URL}/assets/${friend.picturePath}`
               : "/assets/default-image.jpg";
 
           return (

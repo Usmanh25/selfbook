@@ -154,7 +154,7 @@ const UserWidget = ({ userId }) => {
           onClick={() => isOwnProfile && document.getElementById("profile-image-upload").click()}
         >
           <UserImage
-            image={user?.picturePath ? `${BASE_URL}/files/${user.picturePath}` : "/assets/default-image.jpg"}
+            image={user?.picturePath ? `${BASE_URL}/assets/${user.picturePath}` : "/assets/default-image.jpg"}
             size="60px"
           />
           {isOwnProfile && (

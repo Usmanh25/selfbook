@@ -361,7 +361,7 @@ const MyPostWidget = () => {
 
   // Correctly handle default profile image
   const userImagePath = user?.picturePath
-    ? `${BASE_URL}/files/${user.picturePath}`
+    ? `${BASE_URL}/assets/${user.picturePath}`
     : "/assets/default-image.jpg";
 
   return (
