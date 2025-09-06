@@ -1,4 +1,3 @@
-// state/index.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 const BASE_URL = process.env.REACT_APP_BASE_API_URL;
@@ -25,7 +24,6 @@ const authSlice = createSlice({
           : [],
       };
       state.token = action.payload.token;
-      console.log("[Redux setLogin] User set to:", state.user);
     },
     setLogout: (state) => {
       state.user = null;
@@ -49,7 +47,7 @@ const authSlice = createSlice({
       } else if (post) {
         const index = state.posts.findIndex((p) => p._id === post._id);
         if (index !== -1) state.posts[index] = post;
-        else state.posts.unshift(post); // ✅ new post always on top
+        else state.posts.unshift(post); // new post always on top
       }
     },
     setUser: (state, action) => {
@@ -86,37 +84,9 @@ const authSlice = createSlice({
         return post;
       });
     }
-
-    // setUser: (state, action) => {
-    //   const { user, token } = action.payload;
-    //   state.user = { ...user };
-    //   if (token) state.token = token;
-
-    //   // ✅ Update posts authored by this user (works whether post.userId is string or object)
-    //   state.posts = state.posts.map((post) => {
-    //     const postUserId =
-    //       typeof post.userId === "object" ? post.userId._id : post.userId;
-    //     if (postUserId === user._id) {
-    //       return {
-    //         ...post,
-    //         userId: {
-    //           ...(typeof post.userId === "object" ? post.userId : {}),
-    //           _id: user._id,
-    //           firstName: user.firstName,
-    //           lastName: user.lastName,
-    //           location: user.location,
-    //           picturePath: user.picturePath, // ✅ force sync picture
-    //         },
-    //       };
-    //     }
-    //     console.log("[authSlice] Updating picturePath to:", user.picturePath);
-    //     return post;
-    //   });
-    // },
   },
 });
 
-// Thunk to update profile picture
 export const uploadProfilePicture = createAsyncThunk(
   "auth/uploadProfilePicture",
   async ({ userId, file }, { dispatch, getState, rejectWithValue }) => {
@@ -137,7 +107,6 @@ export const uploadProfilePicture = createAsyncThunk(
         }
       );
 
-      // Dispatch setUser to update Redux state
       dispatch(authSlice.actions.setUser({ user: response.data }));
 
       return response.data;
@@ -147,6 +116,7 @@ export const uploadProfilePicture = createAsyncThunk(
     }
   }
 );
+
 export const {
   setMode,
   setLogin,

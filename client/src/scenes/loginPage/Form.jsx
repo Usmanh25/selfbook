@@ -168,9 +168,9 @@ const Form = () => {
                     m: "1rem 0",
                     width: "75%",
                     textAlign: "center",
-                    backgroundColor: "#5493ff",
+                    backgroundColor: "#0866ff",
                     color: palette.background.alt,
-                    "&:hover": { color: "#5493ff" },
+                    "&:hover": { color: "#0866ff" },
                   }}
                 >
                   {isSubmitting ? <CircularProgress size={20} sx={{ color: palette.background.alt }} /> : isLogin ? "LOG IN" : "REGISTER"}
@@ -184,7 +184,7 @@ const Form = () => {
                     fontSize: "14px",
                     textAlign: "center",
                     textDecoration: "underline",
-                    color: "#5493ff",
+                    color: "#0866ff",
                     "&:hover": { cursor: "pointer", color: palette.primary.light },
                   }}
                 >

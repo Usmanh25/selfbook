@@ -4,7 +4,7 @@ const postSchema = mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // ✅ Allows populate()
+      ref: "User", 
       required: true,
     },
     firstName: {

@@ -11,8 +11,6 @@ const UserImage = ({ image, size = "60px", onClick }) => {
     srcPath = `/assets/${image}`;
   }
 
-
-
   return (
     <Box
       width={size}
@@ -20,7 +18,6 @@ const UserImage = ({ image, size = "60px", onClick }) => {
       sx={{ cursor: onClick ? "pointer" : "default" }}
       onClick={onClick}
     >
-
       <img
         style={{ objectFit: "cover", borderRadius: "50%" }}
         width={size}
@@ -34,7 +31,6 @@ const UserImage = ({ image, size = "60px", onClick }) => {
           }
         }}
       />
-
     </Box>
   );
 };

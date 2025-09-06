@@ -18,16 +18,13 @@ import {
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
 
-// Combine reducers under 'auth' key
 const rootReducer = combineReducers({
   auth: authReducer,
 });
 
-// Persist configuration
 const persistConfig = { key: "root", storage, version: 1 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Create store
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -38,7 +35,7 @@ const store = configureStore({
     }),
 });
 
-window.store = store;
+// window.store = store;
 
 const persistor = persistStore(store);
 

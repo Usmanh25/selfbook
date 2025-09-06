@@ -20,7 +20,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       if (!response.ok) throw new Error("Failed to fetch posts");
       const data = await response.json();
 
-      // ⚡ Normalize likes: convert object or Map into array of userIds
+      // Normalize likes: convert object/Map into array of userIds
       const normalizedPosts = data.map((post) => ({
         ...post,
         likes: Array.isArray(post.likes)
@@ -59,12 +59,12 @@ const PostsWidget = ({ userId, isProfile = false }) => {
         <PostWidget
           key={post._id}
           postId={post._id}
-          postUserId={post.userId} // ⚡ pass the full user object
+          postUserId={post.userId} // ⚡ passes full user object
           name={`${post.userId?.firstName || ""} ${post.userId?.lastName || ""}`}
           description={post.description}
           location={post.userId?.location || ""}
           picturePath={post.picturePath}
-          likes={post.likes || []} // ✅ already normalized
+          likes={post.likes || []} // normalized
           comments={post.comments || []}
         />
       ))}

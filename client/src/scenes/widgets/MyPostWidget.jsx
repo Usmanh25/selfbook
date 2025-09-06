@@ -7,7 +7,9 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../state";
+
 const BASE_URL = process.env.REACT_APP_BASE_API_URL;
+
 const MyPostWidget = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
@@ -33,18 +35,17 @@ const MyPostWidget = () => {
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
+
       if (!response.ok) throw new Error("Failed to create post");
       const newPost = await response.json();
       dispatch(setPost({ post: newPost }));
       setPostText("");
       setImage(null);
-      // console.log("[DEBUG][MyPostWidget] Created post:", newPost);
+
     } catch (err) {
       console.error("[MyPostWidget] Error creating post:", err);
     }
   };
-
-  // console.log("[DEBUG][MyPostWidget] Redux user.picturePath:", user?.picturePath);
 
   return (
     <WidgetWrapper>
@@ -83,7 +84,24 @@ const MyPostWidget = () => {
           </FlexBetween>
         )}
 
-        <Button disabled={!postText} onClick={handlePost} sx={{ color: palette.background.alt, backgroundColor: palette.primary.main, borderRadius: "3rem" }}>
+        <Button
+          disabled={!postText}
+          onClick={handlePost}
+          sx={{
+            color: "#ffffff",
+            backgroundColor: "#0866ff",
+            borderRadius: "3rem",
+            "&:hover": {
+              backgroundColor: "#ffffff",
+              color: "#0866ff",
+            },
+            "&.Mui-disabled": {
+              backgroundColor: "#0866ff", 
+              color: "#ffffff", 
+              opacity: 0.6 
+            }
+          }}
+        >
           POST
         </Button>
       </FlexBetween>

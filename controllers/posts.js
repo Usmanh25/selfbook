@@ -1,11 +1,8 @@
-// controllers/posts.js
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 
-/* CREATE */
 export const createPost = async (req, res) => {
   try {
-    console.log("[createPost] req.user:", req.user);
     const description = req.body.description || req.body.postText || "";
     const picturePath = req.file ? req.file.filename : (req.body.picturePath || "");
 
@@ -32,7 +29,6 @@ export const createPost = async (req, res) => {
     });
 
     await newPost.save();
-    console.log("[createPost] saved post id:", newPost._id.toString(), "by user:", user._id.toString());
 
     // repopulate so frontend gets user info inline
     const populatedPost = await Post.findById(newPost._id)
@@ -45,7 +41,6 @@ export const createPost = async (req, res) => {
   }
 };
 
-/* READ: all feed posts */
 export const getFeedPosts = async (req, res) => {
   try {
     const posts = await Post.find()
@@ -59,7 +54,6 @@ export const getFeedPosts = async (req, res) => {
   }
 };
 
-/* READ: posts by user */
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -68,7 +62,6 @@ export const getUserPosts = async (req, res) => {
       .populate("userId", "firstName lastName picturePath location")
       .sort({ createdAt: -1 });
 
-    console.log(`[getUserPosts] userId param: ${userId} - found ${posts.length} posts`);
     return res.status(200).json(posts);
   } catch (err) {
     console.error("[getUserPosts] Error:", err);
@@ -76,7 +69,6 @@ export const getUserPosts = async (req, res) => {
   }
 };
 
-/* LIKE/UNLIKE */
 export const likePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -104,7 +96,6 @@ export const likePost = async (req, res) => {
   }
 };
 
-/* DELETE */
 export const deletePost = async (req, res) => {
   try {
     const { id } = req.params;

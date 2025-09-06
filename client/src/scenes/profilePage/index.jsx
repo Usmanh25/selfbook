@@ -18,7 +18,6 @@ const ProfilePage = () => {
   const loggedInUserId = useSelector((state) => state.auth.user?._id);
 
   useEffect(() => {
-    console.log("Fetching user with ID:", userId);
     getUser();
   }, [userId]);
 
@@ -46,8 +45,8 @@ const ProfilePage = () => {
 
   useEffect(() => {
     getUser();
-  }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  }, [userId]); 
+  
   if (!user) return null;
 
   return (

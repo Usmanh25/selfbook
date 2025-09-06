@@ -1,8 +1,6 @@
-// controllers/users.js
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 
-/* READ: Get a single user */
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -26,7 +24,6 @@ export const getUser = async (req, res) => {
   }
 };
 
-/* READ: Get all users */
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().lean();
@@ -37,7 +34,6 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-/* READ: Get a user's friends */
 export const getUserFriends = async (req, res) => {
   try {
     const { id } = req.params;
@@ -70,7 +66,6 @@ export const getUserFriends = async (req, res) => {
         }
       })
     );
-    console.log("Friends resolved:", friends);
 
     res.status(200).json(friends.filter(Boolean)); // remove any nulls
   } catch (err) {
@@ -79,15 +74,10 @@ export const getUserFriends = async (req, res) => {
   }
 };
 
-/* UPDATE: Add or remove a friend */
-
 export const addRemoveFriend = async (req, res) => {
   try {
     const { id, friendId } = req.params;
 
-    console.log(`[addRemoveFriend] Called with id=${id} and friendId=${friendId}`);
-
-    // 1️⃣ Fetch both users
     const user = await User.findById(id);
     const friend = await User.findById(friendId);
 
@@ -96,38 +86,29 @@ export const addRemoveFriend = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // 2️⃣ Check if friend already exists
     const isFriend = user.friends.some(f => f.toString() === friendId);
-
-    console.log(`[addRemoveFriend] isFriend before update: ${isFriend}`);
 
     if (isFriend) {
       // Remove friend
       user.friends = user.friends.filter(f => f.toString() !== friendId);
       friend.friends = friend.friends.filter(f => f.toString() !== id);
-      console.log(`[addRemoveFriend] Removed friendId=${friendId} from user and id=${id} from friend`);
     } else {
       // Add friend
       user.friends.push(friendId);
       friend.friends.push(id);
-      console.log(`[addRemoveFriend] Added friendId=${friendId} to user and id=${id} to friend`);
     }
 
-    // 3️⃣ Save both users
     await user.save();
     await friend.save();
-    console.log("[addRemoveFriend] Saved both users");
 
-    // 4️⃣ Populate updated friends with minimal fields for frontend
+    // Populate updated friends with minimal fields for frontend
     const updatedUser = await User.findById(id)
       .populate({
         path: "friends",
         select: "_id firstName lastName occupation picturePath",
       });
 
-    console.log("[addRemoveFriend] Updated user friends populated");
 
-    // 5️⃣ Return updated friend list
     res.status(200).json(updatedUser);
   } catch (err) {
     console.error("[addRemoveFriend] Error:", err);
@@ -152,7 +133,6 @@ export const updateUser = async (req, res) => {
   }
 };
 
-
 export const uploadProfileImage = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -161,10 +141,8 @@ export const uploadProfileImage = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Option A: store only filename
     const imagePath = req.file.filename;
 
-    // update the user’s profile image
     const user = await User.findByIdAndUpdate(
       userId,
       { picturePath: imagePath },
@@ -175,7 +153,6 @@ export const uploadProfileImage = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // cascade update for posts
     await Post.updateMany(
       { userId: user._id },
       { $set: { userPicturePath: imagePath } }

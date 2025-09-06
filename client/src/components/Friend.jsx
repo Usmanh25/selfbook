@@ -6,10 +6,13 @@ import { setFriends } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import { useState, useEffect } from "react";
+const BASE_URL = process.env.REACT_APP_BASE_API_URL;
+
 
 const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
   const { _id, friends = [] } = useSelector((state) => state.auth.user || {});
   const token = useSelector((state) => state.auth.token);
   const isSelf = _id && friendId && _id.toString() === friendId.toString();
@@ -19,19 +22,17 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const medium = palette.neutral.medium;
   const mediumMain = palette.neutral.light;
 
-
   const [isFriendLocal, setIsFriendLocal] = useState(friends.some(f => f._id === friendId));
 
   useEffect(() => {
     setIsFriendLocal(friends.some(f => f._id === friendId));
   }, [friends, friendId]);
 
-
   const patchFriend = async () => {
     try {
       setIsFriendLocal(prev => !prev);
 
-      const response = await fetch(`http://localhost:3001/users/${_id}/${friendId}`, {
+      const response = await fetch(`${BASE_URL}/users/${_id}/${friendId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -83,9 +84,9 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
             }}
           >
             {isFriendLocal ? (
-              <PersonRemoveOutlined sx={{ color: "#5493ff" }} />
+              <PersonRemoveOutlined sx={{ color: "#0866ff" }} />
             ) : (
-              <PersonAddOutlined sx={{ color: "#5493ff" }} />
+              <PersonAddOutlined sx={{ color: "#0866ff" }} />
             )}
           </IconButton>
         )}

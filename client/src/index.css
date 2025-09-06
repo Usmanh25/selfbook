@@ -11,30 +11,21 @@ body,
 
 @media screen and (max-width: 700px) {
   #loginImage {
-    /* background-color: pink; */
     height: 70%;
-    /* width: 35%;  */
   }
 }
 
 #loginImage {
   margin-top: 25px;
-  /* margin-right: 25px; */
-  /* padding: 2rem; */
   display: flex;
   justify-content: center;
 }
 .loginImage {
-  /* margin-top: 25px;
-  margin-right: 25px;
-  padding: 2rem; */
   height: 100%;
   width: 100%;
-  /* background-color: green; */
   display: flex;
   justify-content: center;
 }
-
 
 #loginLogo {
   height: 60%;
@@ -45,55 +36,27 @@ body,
 }
 
 .formClass {
-  /* background-color: aquamarine; */
-  /* text-align: center; */
   display: flex;
   justify-items: center;
   flex-direction: column;
 }
 
-
-.boxaroo {
-  background-color: red;
+.formik0 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 10px;
+  width: 50%;
+  max-width: 400px; 
+  min-width: 300px; 
+  margin: auto;
 }
 
 .formik1 {
-  /* background-color: blueviolet; */
-  /* flex-direction: column; */
   margin-top: 25px;
-  
 }
 
 .formik2 {
-  /* background-color: magenta; */
   height: 10%; 
   width: 100%; 
-  /* position: absolute; */
-  /* flex-direction: column; */
-}
-
-.fine-print {
-  cursor: pointer;
-  margin-top: 115px;
-}
-.formik0 {
-  /* background-color: white; */
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  /* padding-left: 25px; */
-  /* flex-direction: column; */
-  /* color: #2fce2f */
-  border-radius: 10px;
-  /* height: 85%; */
-  width: 50%;
-  max-width: 400px; /* optional: prevents it from being too wide */
-  min-width: 300px; /* optional: ensures it doesn’t shrink too much */
-  margin: auto;
-  /* box-sizing: border-box; */
-
-  /* border: 1px solid rgb(201, 198, 198); */
-  /* position: absolute; */
-  /* top: 50%; */
-  /* transform: translateY(-50%); */
 }
 
 .guestLogin {
@@ -103,54 +66,23 @@ body,
   color: white;
 }
 
-.dzone {
-  width: 75%;
-  margin: auto;
-  text-align: center;
-}
-
 .pictagram {
   font-family: Arial, sans-serif;
-  color: #5493ff;
+  color: #0866ff;
 }
 .pictagram-login-subtitle {
   font-family: Arial, sans-serif;
   color: black;
 }
 
-.postsWidget {
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.linkTags {
-  text-decoration: none;
-  color: inherit;
-}
-
-.linkTags:hover {
-  color: #5493ff;
-}
-
-
 .footer-link-item {
-  /* background-color: aquamarine; */
-  /* color: blue; */
   color: #8a8d91;
-  /* width: 50%; */
-  /* height: 50%; */
-  /* display: flex;
-  flex-direction: row; */
   font-size: 10px;
 }
+
 .footer-link-item:hover {
   text-decoration: underline;
   cursor: pointer;
-}
-
-.pbox {
-  background-color: burlywood;
-  display: block;
 }
 
 .ul {
@@ -159,12 +91,6 @@ body,
   margin-block-end: 1em;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
-}
-
-.newdiv {
-  background-color: pink;
-  width: 70%;
-  margin: auto;
 }
 
 .login-button {

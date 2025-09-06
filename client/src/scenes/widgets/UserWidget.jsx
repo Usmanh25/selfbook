@@ -49,7 +49,7 @@ const UserWidget = ({ userId }) => {
 
   useEffect(() => { if (userId) getUser(); }, [userId, token]);
 
-  // Auto-enable edit mode if essential fields are empty
+  // Auto-enable edit for empty fields on 1st signup
   useEffect(() => {
     if (isOwnProfile && user && (!user.firstName || !user.lastName || !user.location || !user.occupation)) {
       setIsEditing(true);
@@ -58,6 +58,7 @@ const UserWidget = ({ userId }) => {
 
   const handleSave = async () => {
     try {
+      // Update user profile
       const response = await fetch(`${BASE_URL}/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -70,36 +71,26 @@ const UserWidget = ({ userId }) => {
       });
       if (!response.ok) throw new Error("Failed to update user");
       const updatedUser = await response.json();
-      setUserLocal(updatedUser);
+
+      // Fetch full friends objects
+      const friendsRes = await fetch(`${BASE_URL}/users/${userId}/friends`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const fullFriends = friendsRes.ok ? await friendsRes.json() : [];
+
+      // Merge user with full friends
+      const mergedUser = { ...updatedUser, friends: fullFriends };
+
+      // Update local state and Redux
+      setUserLocal(mergedUser);
+      dispatch(setUser({ user: mergedUser, token }));
       setIsEditing(false);
-      dispatch(setLogin({ user: updatedUser, token }));
     } catch (err) {
       console.error("[UserWidget] handleSave error:", err);
     }
   };
 
-  // const handleImageChange = async (e) => {
-  //   if (!isOwnProfile) return; // Prevent editing others
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-  //   const formData = new FormData();
-  //   formData.append("picture", file);
-
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/users/${userId}/profile-image`, {
-  //       method: "PATCH",
-  //       headers: { Authorization: `Bearer ${token}` },
-  //       body: formData,
-  //     });
-  //     if (!response.ok) throw new Error("Failed to upload image");
-  //     const updatedUser = await response.json();
-  //     dispatch(setUser({ user: updatedUser, token }));
-  //     setUserLocal(updatedUser);
-  //   } catch (err) {
-  //     console.error("[UserWidget] handleImageChange error:", err);
-  //   }
-  // };
-
+  
   const handleImageChange = async (e) => {
     if (!isOwnProfile) return;
     const file = e.target.files[0];
@@ -109,6 +100,7 @@ const UserWidget = ({ userId }) => {
     formData.append("picture", file);
 
     try {
+      // new profile picture
       const response = await fetch(`${BASE_URL}/users/${userId}/profile-image`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
@@ -117,19 +109,22 @@ const UserWidget = ({ userId }) => {
       if (!response.ok) throw new Error("Failed to upload image");
       const updatedUser = await response.json();
 
-      // ✅ Merge current friends to avoid overwriting
-      const mergedUser = {
-        ...updatedUser,
-        friends: loggedInUser?.friends || [],
-      };
+      // Fetch full friends objects
+      const friendsRes = await fetch(`${BASE_URL}/users/${userId}/friends`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const fullFriends = friendsRes.ok ? await friendsRes.json() : [];
 
-      dispatch(setUser({ user: mergedUser, token }));
+      // Merge user with full friends
+      const mergedUser = { ...updatedUser, friends: fullFriends };
+
+      // Update local state and Redux
       setUserLocal(mergedUser);
+      dispatch(setUser({ user: mergedUser, token }));
     } catch (err) {
       console.error("[UserWidget] handleImageChange error:", err);
     }
   };
-
 
   if (!user) return null;
 
@@ -205,7 +200,7 @@ const UserWidget = ({ userId }) => {
 
       <Divider />
 
-      {/* Editable Fields */}
+      {/* Edit Fields */}
       <Box p="1rem 0" color={main}>
         {isEditing && isOwnProfile ? (
           <>
@@ -247,14 +242,45 @@ const UserWidget = ({ userId }) => {
                 startAdornment: <span style={{ marginRight: 8 }}>📝</span>,
               }}
             />
-            <Button variant="contained" onClick={handleSave}>Save</Button>
+            <Button
+              variant="outlined"  
+              onClick={handleSave}
+              sx={{
+                color: "#0866ff",
+                borderColor: "#0866ff",  
+                borderRadius: "3rem",    
+                "&:hover": {
+                  backgroundColor: "#0866ff", 
+                  color: "#ffffff",           
+                  borderColor: "#0866ff"
+                }
+              }}
+            >
+              Save
+            </Button>
           </>
         ) : (
           <>
             <Typography color={main} sx={{ mb: 1 }}>📍 {user.location || "No location set"}</Typography>
             <Typography color={main} sx={{ mb: 2 }}>📝 {user.occupation || "No description set"}</Typography>
             {isOwnProfile && (
-              <Button variant="outlined" sx={{ mt: 1 }} onClick={() => setIsEditing(true)}>Edit</Button>
+              <Button
+                variant="outlined"             
+                onClick={() => setIsEditing(true)}
+                sx={{
+                  color: "#0866ff",           
+                  borderColor: "#0866ff",  
+                  borderRadius: "3rem",
+                  "&:hover": {
+                    backgroundColor: "rgba(8, 102, 255, 0.1)", 
+                    color: "#0866ff",
+                    borderColor: "#0866ff"
+                  }
+                }}
+              >
+                Edit
+              </Button>
+
             )}
           </>
         )}
@@ -262,16 +288,15 @@ const UserWidget = ({ userId }) => {
 
       <Divider />
 
-      {/* Meet the Creator Section (centered, dark icons) */}
       <Box mt="1rem" textAlign="center">
         <Typography variant="h6" fontWeight="500" color={main} mb="0.5rem">
           Meet the Creator
         </Typography>
         <Box display="flex" justifyContent="center" gap="1rem">
-          <a href="https://www.linkedin.com/in/your-linkedin" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
+          <a href="https://www.linkedin.com/in/usman-hameed-5486b11b0/" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
             <BsLinkedin size={24} />
           </a>
-          <a href="https://github.com/your-github" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
+          <a href="https://github.com/usmanh25" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
             <BsGithub size={24} />
           </a>
         </Box>
