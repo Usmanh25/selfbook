@@ -5,6 +5,7 @@ export const createPost = async (req, res) => {
   try {
     const description = req.body.description || req.body.postText || "";
     const picturePath = req.file ? req.file.filename : (req.body.picturePath || "");
+    console.log("File received:", req.file);
 
     const userId = (req.user && (req.user.id || req.user._id)) || null;
     if (!userId) {
