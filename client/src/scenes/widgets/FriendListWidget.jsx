@@ -59,11 +59,13 @@ const FriendListWidget = () => {
         Friends
       </Typography>
       <Box display="flex" flexDirection="column" gap="1.5rem">
+
         {friends.map((friend) => {
-          const resolvedFriendPicture =
-            friend.picturePath && friend.picturePath !== ""
-              ? `${BASE_URL}/assets/${friend.picturePath}`
-              : "/assets/default-image.jpg";
+          const resolvedFriendPicture = friend.picturePath
+            ? /^[a-f\d]{24}$/i.test(friend.picturePath)
+              ? `${BASE_URL}/files/${friend.picturePath}` // GridFS
+              : `${friend.picturePath}`                    // static filename
+            : "/assets/default-image.jpg";
 
           return (
             <Friend
@@ -71,10 +73,11 @@ const FriendListWidget = () => {
               friendId={friend._id}
               name={`${friend.firstName} ${friend.lastName}`}
               subtitle={friend.occupation || ""}
-              userPicturePath={resolvedFriendPicture}
+              userPicturePath={resolvedFriendPicture} // pass fully resolved
             />
           );
         })}
+
       </Box>
     </WidgetWrapper>
   );

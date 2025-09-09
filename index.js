@@ -30,8 +30,22 @@ app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 
+/* CORS SETUP */
+const allowedOrigins = [
+  "http://localhost:3000",          // local dev frontend
+  "https://selfbook-nine.vercel.app" // production frontend
+];
+
 app.use(cors({
-  origin: "https://selfbook-nine.vercel.app",
+  origin: function (origin, callback) {
+    // allow requests w/ no origin (Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
@@ -43,7 +57,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 /* ROUTES WITH FILES */
-// app.post("/posts", verifyToken, upload.single("picture"), createPost);
+app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 /* ROUTES */
 app.use("/auth", authRoutes);

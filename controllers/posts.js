@@ -1,41 +1,43 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
+import { uploadToGridFS } from "../middleware/upload.js"; 
 
 export const createPost = async (req, res) => {
   try {
     const description = req.body.description || req.body.postText || "";
-    const picturePath = req.file ? req.file.filename : (req.body.picturePath || "");
-    console.log("File received:", req.file);
 
-    const userId = (req.user && (req.user.id || req.user._id)) || null;
-    if (!userId) {
-      console.warn("[createPost] No userId in req.user - user not authenticated");
-      return res.status(401).json({ message: "User not authenticated" });
-    }
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) return res.status(401).json({ message: "User not authenticated" });
 
     const user = await User.findById(userId);
-    if (!user) {
-      console.warn("[createPost] user not found for id:", userId);
-      return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    let picturePath = ""; // default: no image
+
+    if (req.file) {
+      // Save file to GridFS and get the ObjectId string
+      const fileId = await uploadToGridFS(req.file.buffer, req.file.originalname);
+      picturePath = fileId.toString();
     }
 
     const newPost = new Post({
       userId: user._id,
-      firstName: user.firstName, 
+      firstName: user.firstName,
       lastName: user.lastName,
       description,
-      picturePath,
+      picturePath, // GridFS ObjectId if uploaded
       likes: [],
       comments: [],
     });
 
     await newPost.save();
 
-    // repopulate so frontend gets user info inline
+    // Populate user info for frontend
     const populatedPost = await Post.findById(newPost._id)
       .populate("userId", "firstName lastName picturePath location");
 
     return res.status(201).json(populatedPost);
+
   } catch (err) {
     console.error("[createPost] Error:", err);
     return res.status(500).json({ message: "Failed to create post" });

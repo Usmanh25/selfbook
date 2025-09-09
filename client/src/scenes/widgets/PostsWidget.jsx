@@ -1,3 +1,5 @@
+
+
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../state";
@@ -17,20 +19,15 @@ const PostsWidget = ({ userId, isProfile = false }) => {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (!response.ok) throw new Error("Failed to fetch posts");
+
       const data = await response.json();
 
-      // Normalize likes: convert object/Map into array of userIds
-      const normalizedPosts = data.map((post) => ({
-        ...post,
-        likes: Array.isArray(post.likes)
-          ? post.likes
-          : post.likes
-          ? Object.keys(post.likes)
-          : [],
-      }));
+      // ⚡ Keep likes exactly as backend returns them
+      const postsArray = Array.isArray(data) ? data : [];
 
-      dispatch(setPosts({ posts: normalizedPosts }));
+      dispatch(setPosts({ posts: postsArray }));
     } catch (err) {
       console.error("Error fetching posts:", err);
       dispatch(setPosts({ posts: [] }));
@@ -55,19 +52,33 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   return (
     <>
-      {posts.map((post) => (
-        <PostWidget
-          key={post._id}
-          postId={post._id}
-          postUserId={post.userId} // ⚡ passes full user object
-          name={`${post.userId?.firstName || ""} ${post.userId?.lastName || ""}`}
-          description={post.description}
-          location={post.userId?.location || ""}
-          picturePath={post.picturePath}
-          likes={post.likes || []} // normalized
-          comments={post.comments || []}
-        />
-      ))}
+      {posts.map((post) => {
+        const postUser = post.userId;
+
+        // --- Resolve user picture URL ---
+        const isValidObjectId = (id) => /^[a-f\d]{24}$/i.test(id);
+
+        const resolvedUserPicture = postUser?.picturePath
+          ? isValidObjectId(postUser.picturePath)
+            ? `${BASE_URL}/files/${postUser.picturePath}` // GridFS (backend)
+            : `/assets/${postUser.picturePath}`           // static (frontend)
+          : "/assets/default-image.jpg";                  // fallback
+
+        return (
+          <PostWidget
+            key={post._id}
+            postId={post._id}
+            postUserId={postUser} // full user object
+            name={`${postUser?.firstName || ""} ${postUser?.lastName || ""}`}
+            description={post.description}
+            location={postUser?.location || ""}
+            picturePath={post.picturePath}
+            likes={post.likes || []}   // keep original structure
+            comments={post.comments || []}
+            userPicturePath={resolvedUserPicture} // pass resolved picture
+          />
+        );
+      })}
     </>
   );
 };
