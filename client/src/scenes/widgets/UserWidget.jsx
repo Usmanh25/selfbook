@@ -5,9 +5,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { BsLinkedin, BsGithub } from "react-icons/bs";
 import { FiCamera } from "react-icons/fi";
-import { setLogin, setUser } from "state";
+import { setUser } from "state";
 import { useNavigate } from "react-router-dom";
-
 
 const BASE_URL = process.env.REACT_APP_BASE_API_URL;
 
@@ -29,27 +28,37 @@ const UserWidget = ({ userId }) => {
   const [locationInput, setLocationInput] = useState("");
   const [occupationInput, setOccupationInput] = useState("");
 
-  const getUser = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error("Failed to fetch user");
-      const data = await response.json();
-      setUserLocal(data);
-      setFirstNameInput(data.firstName || "");
-      setLastNameInput(data.lastName || "");
-      setLocationInput(data.location || "");
-      setOccupationInput(data.occupation || "");
-    } catch (err) {
-      console.error("[UserWidget] Error fetching user:", err);
-      setUserLocal({ firstName: "Guest", lastName: "", location: "", occupation: "", friends: [] });
-    }
-  };
+  useEffect(() => {
+    if (!userId) return;
 
-  useEffect(() => { if (userId) getUser(); }, [userId, token]);
+    const getUser = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) throw new Error("Failed to fetch user");
 
-  // Auto-enable edit mode if essential fields are empty
+        const data = await response.json();
+        setUserLocal(data);
+        setFirstNameInput(data.firstName || "");
+        setLastNameInput(data.lastName || "");
+        setLocationInput(data.location || "");
+        setOccupationInput(data.occupation || "");
+      } catch (err) {
+        console.error("[UserWidget] Error fetching user:", err);
+        setUserLocal({
+          firstName: "Guest",
+          lastName: "",
+          location: "",
+          occupation: "",
+          friends: [],
+        });
+      }
+    };
+
+    getUser();
+  }, [userId, token]);
+
   useEffect(() => {
     if (isOwnProfile && user && (!user.firstName || !user.lastName || !user.location || !user.occupation)) {
       setIsEditing(true);
@@ -58,7 +67,6 @@ const UserWidget = ({ userId }) => {
 
   const handleSave = async () => {
     try {
-      // 1️⃣ Update user profile
       const response = await fetch(`${BASE_URL}/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -72,16 +80,13 @@ const UserWidget = ({ userId }) => {
       if (!response.ok) throw new Error("Failed to update user");
       const updatedUser = await response.json();
 
-      // 2️⃣ Fetch full friends objects
       const friendsRes = await fetch(`${BASE_URL}/users/${userId}/friends`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const fullFriends = friendsRes.ok ? await friendsRes.json() : [];
 
-      // 3️⃣ Merge user with full friends
       const mergedUser = { ...updatedUser, friends: fullFriends };
 
-      // 4️⃣ Update local state and Redux
       setUserLocal(mergedUser);
       dispatch(setUser({ user: mergedUser, token }));
       setIsEditing(false);
@@ -90,7 +95,6 @@ const UserWidget = ({ userId }) => {
     }
   };
 
-  
   const handleImageChange = async (e) => {
     if (!isOwnProfile) return;
     const file = e.target.files[0];
@@ -100,7 +104,6 @@ const UserWidget = ({ userId }) => {
     formData.append("picture", file);
 
     try {
-      // 1️⃣ Upload new profile picture
       const response = await fetch(`${BASE_URL}/users/${userId}/profile-image`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
@@ -109,16 +112,13 @@ const UserWidget = ({ userId }) => {
       if (!response.ok) throw new Error("Failed to upload image");
       const updatedUser = await response.json();
 
-      // 2️⃣ Fetch full friends objects
       const friendsRes = await fetch(`${BASE_URL}/users/${userId}/friends`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const fullFriends = friendsRes.ok ? await friendsRes.json() : [];
 
-      // 3️⃣ Merge user with full friends
       const mergedUser = { ...updatedUser, friends: fullFriends };
 
-      // 4️⃣ Update local state and Redux
       setUserLocal(mergedUser);
       dispatch(setUser({ user: mergedUser, token }));
     } catch (err) {
@@ -126,14 +126,12 @@ const UserWidget = ({ userId }) => {
     }
   };
 
-
   if (!user) return null;
 
   const { firstName, lastName, friends = [] } = user;
 
   return (
     <WidgetWrapper>
-      {/* Profile Image */}
       <input
         type="file"
         id="profile-image-upload"
@@ -154,14 +152,10 @@ const UserWidget = ({ userId }) => {
           }}
           onClick={() => isOwnProfile && document.getElementById("profile-image-upload").click()}
         >
-          {/* <UserImage
-            image={user?.picturePath ? `${BASE_URL}/assets/${user.picturePath}` : "/assets/default-image.jpg"}
-            size="60px"
-          /> */}
           <UserImage
             image={
               user?.picturePath
-                ? user.picturePath.length === 24 // crude check for ObjectId
+                ? user.picturePath.length === 24
                   ? `${BASE_URL}/files/${user.picturePath}`
                   : `/assets/${user.picturePath}`
                 : "/assets/default-image.jpg"
@@ -193,11 +187,12 @@ const UserWidget = ({ userId }) => {
           )}
         </Box>
 
-        <Box 
+        <Box
           onClick={() => navigate(`/profile/${userId}`)}
-          display="flex" 
-          flexDirection="column" 
-          justifyContent="center">
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+        >
           <Typography
             variant="h4"
             color={main}
@@ -212,7 +207,6 @@ const UserWidget = ({ userId }) => {
 
       <Divider />
 
-      {/* Editable Fields */}
       <Box p="1rem 0" color={main}>
         {isEditing && isOwnProfile ? (
           <>
@@ -254,14 +248,22 @@ const UserWidget = ({ userId }) => {
                 startAdornment: <span style={{ marginRight: 8 }}>📝</span>,
               }}
             />
-            <Button variant="contained" onClick={handleSave}>Save</Button>
+            <Button variant="contained" onClick={handleSave}>
+              Save
+            </Button>
           </>
         ) : (
           <>
-            <Typography color={main} sx={{ mb: 1 }}>📍 {user.location || "No location set"}</Typography>
-            <Typography color={main} sx={{ mb: 2 }}>📝 {user.occupation || "No description set"}</Typography>
+            <Typography color={main} sx={{ mb: 1 }}>
+              📍 {user.location || "No location set"}
+            </Typography>
+            <Typography color={main} sx={{ mb: 2 }}>
+              📝 {user.occupation || "No description set"}
+            </Typography>
             {isOwnProfile && (
-              <Button variant="outlined" sx={{ mt: 1 }} onClick={() => setIsEditing(true)}>Edit</Button>
+              <Button variant="outlined" sx={{ mt: 1 }} onClick={() => setIsEditing(true)}>
+                Edit
+              </Button>
             )}
           </>
         )}
@@ -269,16 +271,25 @@ const UserWidget = ({ userId }) => {
 
       <Divider />
 
-      {/* Meet the Creator Section (centered, dark icons) */}
       <Box mt="1rem" textAlign="center">
         <Typography variant="h6" fontWeight="500" color={main} mb="0.5rem">
           Meet the Creator
         </Typography>
         <Box display="flex" justifyContent="center" gap="1rem">
-          <a href="https://www.linkedin.com/in/usman-hameed-5486b11b0" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
+          <a
+            href="https://www.linkedin.com/in/usman-hameed-5486b11b0"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: main }}
+          >
             <BsLinkedin size={24} />
           </a>
-          <a href="https://github.com/usmanh25" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
+          <a
+            href="https://github.com/usmanh25"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: main }}
+          >
             <BsGithub size={24} />
           </a>
         </Box>
@@ -288,16 +299,6 @@ const UserWidget = ({ userId }) => {
 };
 
 export default UserWidget;
-
-
-
-
-
-
-
-
-
-
 
 
 
