@@ -275,10 +275,10 @@ const UserWidget = ({ userId }) => {
           Meet the Creator
         </Typography>
         <Box display="flex" justifyContent="center" gap="1rem">
-          <a href="https://www.linkedin.com/in/your-linkedin" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
+          <a href="https://www.linkedin.com/in/usman-hameed-5486b11b0" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
             <BsLinkedin size={24} />
           </a>
-          <a href="https://github.com/your-github" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
+          <a href="https://github.com/usmanh25" target="_blank" rel="noopener noreferrer" style={{ color: main }}>
             <BsGithub size={24} />
           </a>
         </Box>
