@@ -25,7 +25,7 @@ const LoginPage = () => {
                     fontSize="clamp(2rem, 4rem, 4.5rem)">selfbook</Typography>
                   <Typography
                     className="pictagram-login-subtitle"
-                    fontSize="clamp(0.8rem, 1.8rem, 2.05rem)">Connect with friends and the world around you on selfbook.</Typography>
+                    fontSize="clamp(0.8rem, 1.8rem, 2.05rem)">Connect with friends and the world around <br></br>you on selfbook.</Typography>
                 </Box>
               <Form/>
             </Box>
@@ -66,7 +66,7 @@ const LoginPage = () => {
                 <Typography
                   mb={3}
                   className="pictagram-login-subtitle"
-                  fontSize={22} >Connect with friends and the world around <br></br> you on selfbook.</Typography>
+                  fontSize={22} >Connect with friends and the world around you on selfbook.</Typography>
               </Box>
             <Form/>
           </Box>
