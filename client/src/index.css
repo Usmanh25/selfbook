@@ -48,6 +48,7 @@ body,
   max-width: 400px; 
   min-width: 300px; 
   margin: auto;
+  
 }
 
 .formik1 {
@@ -73,6 +74,7 @@ body,
 .pictagram-login-subtitle {
   font-family: Arial, sans-serif;
   color: black;
+  /* padding-right: 50px; */
 }
 
 .footer-link-item {

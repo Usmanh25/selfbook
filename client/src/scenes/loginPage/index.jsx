@@ -17,7 +17,7 @@ const LoginPage = () => {
 
         {isNonMobileScreens ? 
           <>
-            <Box display="flex" width="75%" height="75%" m="auto" mt={7}>
+            <Box display="flex" width="75%" height="75%" m="auto" mt={7} gap="50px">
                 <Box m="auto">
                   <Typography
                     className="pictagram"
@@ -25,7 +25,7 @@ const LoginPage = () => {
                     fontSize="clamp(2rem, 4rem, 4.5rem)">selfbook</Typography>
                   <Typography
                     className="pictagram-login-subtitle"
-                    fontSize="clamp(0.8rem, 1.8rem, 2.05rem)">Connect with friends and the world around <br></br>you on selfbook.</Typography>
+                    fontSize="clamp(0.8rem, 1.8rem, 2.05rem)">Connect with friends and the world around you on selfbook.</Typography>
                 </Box>
               <Form/>
             </Box>
